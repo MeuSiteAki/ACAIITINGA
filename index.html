@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Venda de Açaí</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #b307df;
+        margin: 0;
+        padding: 20px;
+        animation: brilhar 3.0s infinite alternate;
+    }
+
+    @keyframes brilhar {
+        from {
+            background-color: #6c0086;
+        }
+        to {
+            background-color: #eb00cb;
+        }
+    }
+
+    .container {
+        max-width: 800px;
+        margin: auto;
+        background: white;
+        padding: 20px;
+        border-radius: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        text-align: center;
+    }
+
+    .im1 {
+        max-width: 80%;
+        height: auto;
+        border-radius: 20px;
+        animation: cair 2s forwards;
+        box-shadow: 5px 5px 20px #6c0086;
+    }
+
+    @keyframes cair {
+        from {
+            transform: translateY(-100%);
+        }
+        to {
+            transform: translateY(0);
+        }
+    }
+
+    .produtos {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        text-align: center;
+    }
+
+    .produto {
+        margin-bottom: 20px;
+        flex: 1 1 30%;
+        box-sizing: border-box;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        margin-right: 10px;
+    }
+
+    button {
+        margin-right: 10px;
+        padding: 7px;
+        background-color: #008b21;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        width: 60px;
+        font-size: 11px;
+        font-weight: 600;
+        box-shadow: 5px 5px 5px black;
+    }
+
+    button.remover {
+        background-color: #f10018;
+    }
+
+    button.remover:hover {
+        background-color: #c82333;
+    }
+
+    button:hover {
+        background-color: #28d14c;
+    }
+
+    #resumo {
+        margin-top: 20px;
+        border-top: 1px solid #ccc;
+        padding-top: 10px;
+    }
+
+    .ingrediente {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+        justify-content: space-between;
+    }
+
+    section {
+        margin-top: 20px;
+    }
+    h2{
+        font-size: 20px;
+    }
+    h1{
+        font-size: 20px;
+        background-color: #8d03af;
+        color: white;
+        padding: 5px;
+        border-radius: 7px;
+        font-size: 25px;
+        text-shadow: 5px 5px 5px black;
+        box-shadow: 10px 10px 10px #bd02ebc5;
+    }
+    select{
+        text-align: center;
+        font-family: Verdana, Geneva, Tahoma, sans-serif;
+        padding: 3px;
+        border-radius: 5px;
+        font-weight: 600;
+        font-size: 18px;
+    }
+    ::placeholder{
+        text-align: center;
+        color: rgb(73, 73, 73);
+        font-size: 17px;
+    }
+    input{
+        padding: 3px;
+        border-radius: 5px;
+        font-size: 22px;
+        text-align: center;
+        font-weight: 600;
+    }
+    h3{
+        background-color: #8d03af;
+        color: white;
+        padding: 3px;
+        border-radius: 7px;
+        font-size: 25px;
+        text-shadow: 5px 5px 5px black;
+        box-shadow: 10px 10px 10px #bd02ebc5;
+    }
+    span{
+        background-color: #3c004b;
+        color: white;
+        padding: 8px;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 20px;
+        box-shadow: 5px 5px 20px #6b008693;
+    }
+    .p{
+        font-weight: 600;
+        font-size: 20px;
+    }
+    ul{
+        font-family: Verdana;
+        font-weight: 600;
+        font-family: 20px;
+    }
+    .ml{
+        background-color: #31003d;
+        color: white;
+        padding: 2px;
+        border-radius: 7px;
+    }
+</style>
+<body>
+    <div id="topo" class="container">
+        <img class="im1" src="açai2.jpeg" alt="">
+        <div id="status"></div>
+    <style>
+        .aberto { color: green; font-size: 20px; text-align: center; background-color: #17801b; color: white;padding: 4px;border-radius: 10px; }
+        .fechado {color: red; font-size: 20px; text-align: center; background-color: red; color: white;padding: 4px;border-radius: 10px;}
+    </style>
+        <h1><marquee behavior="" direction="" scrollamount="4">SEJA BEM VINDO(A)</marquee></h1>
+        
+        <script>
+            function verificarHorario() {
+                const hoje = new Date();
+                const diaDaSemana = hoje.getDay();
+                const horaAtual = hoje.getHours();
+                const minutosAtual = hoje.getMinutes();
+        
+                const lojaAbre = 13; // 13:30
+                const lojaFecha = 23; // 23:00
+        
+                const statusDiv = document.getElementById('status');
+        
+                if ((horaAtual > lojaAbre || (horaAtual === lojaAbre && minutosAtual >= 30)) && horaAtual < lojaFecha) {
+                    statusDiv.innerHTML = "<p class='aberto'>ESTAMOS ABERTO!</p>";
+                } else {
+                    statusDiv.innerHTML = "<p class='fechado'>ESTAMOS FECHADO!</p>";
+                }
+            }
+        
+            verificarHorario();
+        </script>
+        <!-- <button style="font-family: Verdana;font-size: 16px;width: 100px; background-color: rgb(253, 0, 0);" onclick="mostrarAviso()">Aviso!</button> -->
+        <h1>ESCOLHA O TAMANHO</h1>
+        <div  class="produtos">
+            <div class="produto">
+                <img class="im1" src="açai.jpg" alt="">
+                <h2 class="ml">Açaí 300ml</h2>
+                <p class="p">R$10,00</p>
+                <button onclick="adicionar('Açaí - 300ml', 10)">Adicionar</button><br><br>
+                <button class="remover" onclick="remover('Açaí - 300ml', 10)">Remover</button>
+            </div>
+            <div class="produto">
+                <img class="im1" src="açai.jpg" alt="">
+                <h2 class="ml">Açaí 400ml</h2>
+                <p class="p">R$15,00</p>
+                <button onclick="adicionar('Açaí - 400ml', 15)">Adicionar</button><br><br>
+                <button class="remover" onclick="remover('Açaí - 400ml', 15)">Remover</button>
+            </div>
+            <div class="produto">
+                <img class="im1" src="açai.jpg" alt="">
+                <h2 class="ml">Açaí 500ml</h2>
+                <p class="p">R$20,00</p>
+                <button onclick="adicionar('Açaí - 500ml', 20)">Adicionar</button><br><br>
+                <button class="remover" onclick="remover('Açaí - 500ml', 20)">Remover</button>
+            </div>
+        </div>
+        <section>
+            <h3>FRUTAS</h3>
+            <div class="ingrediente">
+                <span>Abacaxi </span>
+                <div>
+                    <button style="font-size: 18px; padding: 5px;" onclick="adicionarIngrediente('Abacaxi')">+</button>
+                    <button style="font-size: 18px; padding: 5px;" class="remover" onclick="removerIngrediente('Abacaxi')">-</button>
+                </div>
+            </div>
+            <div class="ingrediente">
+                <span>Maçã</span>
+                <div>
+                    <button style="font-size: 18px; padding: 5px;" onclick="adicionarIngrediente('Maçã')">+</button>
+                    <button style="font-size: 18px; padding: 5px;" class="remover" onclick="removerIngrediente('Maçã')">-</button>
+                </div>
+            </div>
+            <div class="ingrediente">
+                <span>Morango</span>
+                <div>
+                    <button style="font-size: 18px; padding: 5px;" onclick="adicionarIngrediente('Morango')">+</button>
+                    <button style="font-size: 18px; padding: 5px;" class="remover" onclick="removerIngrediente('Morango')">-</button>
+                </div>
+            </div>
+            <div class="ingrediente">
+                <span>Mamão</span>
+                <div>
+                    <button style="font-size: 18px; padding: 5px;" onclick="adicionarIngrediente('Mamão')">+</button>
+                    <button style="font-size: 18px; padding: 5px;" class="remover" onclick="removerIngrediente('Mamão')">-</button>
+                </div>
+            </div>
+            <div class="ingrediente">
+                <span>Kiwi</span>
+                <div>
+                    <button style="font-size: 18px; padding: 5px;" onclick="adicionarIngrediente('Kiwi')">+</button>
+                    <button style="font-size: 18px; padding: 5px;" class="remover" onclick="removerIngrediente('Kiwi')">-</button>
+                </div>
+            </div>
+            <div class="ingrediente">
+                <span>Banana</span>
+                <div>
+                    <button style="font-size: 18px; padding: 5px;" onclick="adicionarIngrediente('Banana')">+</button>
+                    <button style="font-size: 18px; padding: 5px;" class="remover" onclick="removerIngrediente('Banana')">-</button>
+                </div>
+            </div>
+            <div class="ingrediente">
+                <span>Uva</span>
+                <div>
+                    <button style="font-size: 18px; padding: 5px;" onclick="adicionarIngrediente('Uva')">+</button>
+                    <button style="font-size: 18px; padding: 5px;" class="remover" onclick="removerIngrediente('Uva')">-</button>
+                </div>
+            </div>
+            <div class="ingrediente">
+                <span>Pitaya</span>
+                <div>
+                    <button style="font-size: 18px; padding: 5px;" onclick="adicionarIngrediente('Pitaya')">+</button>
+                    <button style="font-size: 18px; padding: 5px;" class="remover" onclick="removerIngrediente('Pitaya')">-</button>
+                </div>
+            </div>
+            <div class="ingrediente">
+                <span>Manga</span>
+                <div>
+                    <button style="font-size: 18px; padding: 5px;" onclick="adicionarIngrediente('Manga')">+</button>
+                    <button style="font-size: 18px; padding: 5px;" class="remover" onclick="removerIngrediente('Manga')">-</button>
+                </div>
+            </div>
+        </section>
+        <section>
+            <h3>INGREDIENTES</h3>
+            <div class="ingrediente">
+                <span>Granola</span>
+                <div>
+                    <button style="font-size: 18px; padding: 5px;" onclick="adicionarIngrediente('Granola')">+</button>
+                    <button style="font-size: 18px; padding: 5px;" class="remover" onclick="removerIngrediente('Granola')">-</button>
+                </div>
+            </div>
+            <div class="ingrediente">
+                <span>Flocos de arroz</span>
+                <div>
+                    <button style="font-size: 18px; padding: 5px;" onclick="adicionarIngrediente('Flocos de arroz')">+</button>
+                    <button style="font-size: 18px; padding: 5px;" style="font-size: 18px; padding: 5px;" class="remover" onclick="removerIngrediente('Flocos de arroz')">-</button>
+                </div>
+            </div>
+            <div class="ingrediente">
+                <span>Jujuba</span>
+                <div>
+                    <button style="font-size: 18px; padding: 5px;" onclick="adicionarIngrediente('Jujuba')">+</button>
+                    <button class="remover" onclick="removerIngrediente('Jujuba')">-</button>
+                </div>
+            </div>
+            <div class="ingrediente">
+                <span>Amendoim</span>
+                <div>
+                    <button style="font-size: 18px; padding: 5px;" onclick="adicionarIngrediente('Amendoim')">+</button>
+                    <button style="font-size: 18px; padding: 5px;" class="remover" onclick="removerIngrediente('Amendoim')">-</button>
+                </div>
+            </div>
+            <div class="ingrediente">
+                <span>Tapioca</span>
+                <div>
+                    <button style="font-size: 18px; padding: 5px;" onclick="adicionarIngrediente('Tapioca')">+</button>
+                    <button style="font-size: 18px; padding: 5px;" class="remover" onclick="removerIngrediente('Tapioca')">-</button>
+                </div>
+            </div>
+            <div class="ingrediente">
+                <span>Leite em pó</span>
+                <div>
+                    <button style="font-size: 18px; padding: 5px;" onclick="adicionarIngrediente('Leite em pó')">+</button>
+                    <button style="font-size: 18px; padding: 5px;" class="remover" onclick="removerIngrediente('Leite em pó')">-</button>
+                </div>
+            </div>
+            <div class="ingrediente">
+                <span>Coco ralado</span>
+                <div>
+                    <button style="font-size: 18px; padding: 5px;" onclick="adicionarIngrediente('Coco ralado')">+</button>
+                    <button style="font-size: 18px; padding: 5px;" class="remover" onclick="removerIngrediente('Coco ralado')">-</button>
+                </div>
+            </div>
+            <div class="ingrediente">
+                <span>Disquete</span>
+                <div>
+                    <button style="font-size: 18px; padding: 5px;" onclick="adicionarIngrediente('Disquete')">+</button>
+                    <button style="font-size: 18px; padding: 5px;" class="remover" onclick="removerIngrediente('Disquete')">-</button>
+                </div>
+            </div>
+            <div class="ingrediente">
+                <span>Chocobol</span>
+                <div>
+                    <button style="font-size: 18px; padding: 5px;" onclick="adicionarIngrediente('Chocobol')">+</button>
+                    <button style="font-size: 18px; padding: 5px;" class="remover" onclick="removerIngrediente('Chocobol')">-</button>
+                </div>
+            </div>
+            <div class="ingrediente">
+                <span>Paçoca</span>
+                <div>
+                    <button style="font-size: 18px; padding: 5px;" onclick="adicionarIngrediente('Paçoca')">+</button>
+                    <button style="font-size: 18px; padding: 5px;" class="remover" onclick="removerIngrediente('Paçoca')">-</button>
+                </div>
+            </div>
+            <h3>COBERTURAS</h3>
+            <div class="ingrediente">
+                <span>Chocolate</span>
+                <div>
+                    <button style="font-size: 18px; padding: 5px;" onclick="adicionarIngrediente('Cobertura Chocolate')">+</button>
+                    <button style="font-size: 18px; padding: 5px;" class="remover" onclick="removerIngrediente('Cobertura Chocolate')">-</button>
+                </div>
+            </div>
+            <div class="ingrediente">
+                <span>Morango</span>
+                <div>
+                    <button style="font-size: 18px; padding: 5px;" onclick="adicionarIngrediente('Cobertura Morango')">+</button>
+                    <button style="font-size: 18px; padding: 5px;" class="remover" onclick="removerIngrediente('Cobertura Morango')">-</button>
+                </div>
+            </div>
+            <div class="ingrediente">
+                <span>Kiwi</span>
+                <div>
+                    <button style="font-size: 18px; padding: 5px;" onclick="adicionarIngrediente('Cobertura Kiwi')">+</button>
+                    <button style="font-size: 18px; padding: 5px;" class="remover" onclick="removerIngrediente('Cobertura Kiwi')">-</button>
+                </div>
+            </div>
+            <div class="ingrediente">
+                <span>Leite condensado</span>
+                <div>
+                    <button style="font-size: 18px; padding: 5px;" onclick="adicionarIngrediente('Cobertura Leite condensado')">+</button>
+                    <button style="font-size: 18px; padding: 5px;" class="remover" onclick="removerIngrediente('Cobertura Leite condensado')">-</button>
+                </div>
+            </div>
+        </section>
+        <!-- <section>
+            <h3>MOUSSES</h3>
+            <h4 style="font-size: 20px;">(Pote de 50ml - Valor:R$4,00)</h4>
+            <div class="ingrediente">
+                <span>M. Maracujá</span>
+                <div>
+                    <button style="font-size: 18px; padding: 5px;" onclick="adicionarSobremesa('Mousse Maracujá', 4)">+</button>
+                    <button style="font-size: 18px; padding: 5px;" class="remover" onclick="removerIngrediente('Mousse Maracujá', 4)">-</button>
+                </div>
+            </div>
+            <div class="ingrediente">
+                <span>M. Ninho</span>
+                <div>
+                    <button style="font-size: 18px; padding: 5px;" onclick="adicionarSobremesa('Mousse Ninho', 4)">+</button>
+                    <button style="font-size: 18px; padding: 5px;" class="remover" onclick="removerIngrediente('Mousse Ninho', 4)">-</button>
+                </div>
+            </div>
+            <div class="ingrediente">
+                <span>M. Morango</span>
+                <div>
+                    <button style="font-size: 18px; padding: 5px;" onclick="adicionarSobremesa('Mousse Morango', 4)">+</button>
+                    <button style="font-size: 18px; padding: 5px;" class="remover" onclick="removerIngrediente('Mousse Morango', 4)">-</button>
+                </div>
+            </div>
+            <div class="ingrediente">
+                <span>M. Cupuaçu</span>
+                <div>
+                    <button style="font-size: 18px; padding: 5px;" onclick="adicionarSobremesa('Mousse Cupuaçu', 4)">+</button>
+                    <button style="font-size: 18px; padding: 5px;" class="remover" onclick="removerIngrediente('Mousse Cupuaçu', 4)">-</button>
+                </div>
+            </div>
+            <div class="ingrediente">
+                <span>M. Limão</span>
+                <div>
+                    <button style="font-size: 18px; padding: 5px;" onclick="adicionarSobremesa('Mousse Limão', 4)">+</button>
+                    <button style="font-size: 18px; padding: 5px;" class="remover" onclick="removerIngrediente('Mousse Limão', 4)">-</button>
+                </div>
+            </div>
+            <div class="ingrediente">
+                <span>M. Oreo</span>
+                <div>
+                    <button style="font-size: 18px; padding: 5px;" onclick="adicionarSobremesa('Mousse Oreo', 4)">+</button>
+                    <button style="font-size: 18px; padding: 5px;" class="remover" onclick="removerIngrediente('Mousse Oreo', 4)">-</button>
+                </div>
+            </div>
+            <div class="ingrediente">
+                <span>M. Amendoim</span>
+                <div>
+                    <button style="font-size: 18px; padding: 5px;" onclick="adicionarSobremesa('Mousse Amendoim', 4)">+</button>
+                    <button style="font-size: 18px; padding: 5px;" class="remover" onclick="removerIngrediente('Mousse Amendoim', 4)">-</button>
+                </div>
+            </div>
+            <section> -->
+                <button id="contador-btn" style="position: fixed; bottom: 300px; right: 1px; padding: 4px; background-color: rgb(63, 63, 63); 
+                color: white; border: none; border-radius: 5px; width: 30px; font-weight: 600; font-family: Verdana; font-size: 15px;" onclick="togglePopup()">L <br> I <br> S <br> T <br> A</button>
+                <div id="popup" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; border: 1px solid #ccc; padding: 10px; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.5);">
+                    <h4>Adicionados:</h4>
+                    <ul id="lista-ingredientes-popup"></ul>
+                    <button onclick="togglePopup()">Fechar</button><br><br>
+                </div>
+            </section>
+            <div id="resumo">
+                <h3 style="background-color: #094b00; box-shadow: 10px 10px 10px rgba(0, 128, 0, 0.705)" id="carrinho2">CARRINHO</h3>
+                <ul id="lista-pedido"></ul>
+                <p style="font-family: Verdana; font-weight: 600; color: rgb(245, 0, 0); font-size: 30px;" id="valor-total"> Valor Total: R$0,00</p>
+            </div>
+            <button style="font-family: Verdana;font-size: 12px;width: 160px;background-color: #ff0800;" onclick="limparCarrinho()">Limpar Carrinho</button>
+            <section>
+                <h3 style="background-color: #094b00;box-shadow: 10px 10px 10px rgba(0, 128, 0, 0.705)">ENTREGA</h3>
+                <input type="text" id="nome-cliente" placeholder="Nome do Cliente" required><br><br>
+                <input type="text" id="endereco" placeholder="Rua + Ponto de Ref." required><br><br>
+                <select style="font-size: 18px;" id="bairro" onchange="atualizarValorEntrega()">
+                    <option value="0">Selecione o Bairro</option>
+                    <option value="0">Centro  </option>
+                    <option value="0">Coqueiral </option>
+                    <option value="0">Vila Emanuela </option>
+                    <option value="0">J. Planalto  </option>
+                    <option value="0">Parque Primavera  </option>
+                    <option value="0">Vila Samuel </option>
+                    <option value="0">São Sebastião </option>
+                    <option value="0">Paraíso  </option>
+                    <option value="0">São João   </option>
+                    <option value="0">Vila Jamel  </option>
+                    <option value="4">Paulistão - R$4,00 </option>
+                    <option value="4">Itinga Pará - R$4,00 </option>
+                </select><br><br>
+                <button style="padding: 5px; border-radius: 10px; background-color: blue; color: white; font-weight: 600; cursor: pointer; width: 200px; font-size: 15px;" onclick="copiarTexto('99992247544')">Copia e cola PIX: <br> 99992247544</button>
+                <script>
+                    function copiarTexto(texto) {
+                        navigator.clipboard.writeText(texto).then(() => {
+                            Swal.fire('PIX copiado: ' + texto);
+                        }).catch(err => {
+                            console.error('Erro ao copiar: ', err);
+                        });
+                    }
+                </script>
+                <p style="font-family: Verdana; font-weight: 600; font-size: 18px;"><u>OBSERVAÇÃO:</u></p>
+                <textarea style="font-family: Verdana; font-weight: 600; color: red; width: 50%; border-radius: 5px;" name="obser" id="obser" cols="3" rows="1"></textarea><br>
+                <h4 style="font-size: 18px; font-family: Verdana;font-weight: 600;"><u>FORMA DE PAGAMENTO:</u></h4>
+                <select id="forma-pagamento"><br>
+                    <option >-:-</option>
+                    <option value="PIX">PIX</option>
+                    <option value="Cartão de Crédito">Cartão de Crédito</option>
+                    <option value="Débito">Débito</option>
+                    <option value="Dinheiro">Dinheiro</option>
+                </select>
+                <h5>*Se o pagamento for no PIX, favor enviar o comprovante junto com o pedido. <br>
+                *Se o pagamento for em dinheiro, colocar o valor em Observação para se caso houver troco.</h5><br>
+                <button class="botao-piscante" onclick="enviarPedido()">Enviar Pedido</button>
+                <style>
+                    @keyframes piscar {
+                        0% { background-color: #094b00; }
+                        50% { background-color: #10c400; }
+                        100% { background-color: #094b00; }
+                    }
+                    .botao-piscante {
+                        font-family: Verdana;
+                        font-size: 25px;
+                        width: 250px;
+                        animation: piscar 3s infinite;
+                    }
+                </style>
+                <script>
+                    function mostrarAviso() {
+                        Swal.fire('Prezado cliente, não fazemos entregas nas terça-feiras!');
+                    }
+                </script>
+            </section>
+            </div>
+    
+            <script>
+                // limpar carrinho
+                function limparCarrinho() {
+                    carrinho = [];
+                    quantidade1Total = 0;
+                    total = 0;
+                    ingredientesAdicionados = {
+                        'Abacaxi': 0,
+                        'Maçã': 0,
+                        'Morango': 0,
+                        'Mamão': 0,
+                        'Kiwi': 0,
+                        'Banana': 0,
+                        'Uva': 0,
+                        'Pitaya': 0,
+                        'Manga': 0,
+                        'Granola': 0,
+                        'Flocos de arroz': 0,
+                        'Jujuba': 0,
+                        'Amendoim': 0,
+                        'Tapioca': 0,
+                        'Leite em pó': 0,
+                        'Coco ralado': 0,
+                        'Disquete': 0,
+                        'Chocobol': 0,
+                        'Paçoca': 0,
+                    };
+                    sobremesasAdicionadas = {
+                        'Mousse Maracujá': 0,
+                        'Mousse Ninho': 0,
+                        'Mousse Morango': 0,
+                        'Mousse Cupuaçu': 0,
+                        'Mousse Limão': 0,
+                        'Mousse Oreo': 0,
+                        'Mousse Amendoim': 0,
+                    };
+                    document.getElementById('quantidade1').innerText = quantidade1Total;
+                    atualizarResumo();
+                    Swal.fire('Carrinho limpo!').then(() => {
+                        location.reload();
+                    });
+                }
+            </script>
+            </section>
+            </div>
+            <div id="quantidade1">0</div>
+            <style>
+                #quantidade1 {
+                    width: 3%;position: fixed;width: 25px;height: 28px;bottom: 175px;right: 10px;text-align: center;font-size: 25px;z-index: 1000;background-color: rgb(102, 3, 77);border-radius: 30px; color: rgb(247, 240, 240);
+                }
+            </style>
+        <img style="display: none;" src="abaca.jpeg" alt="">
+<img style="display: none;" src="maca.jpeg" alt="">
+<img style="display: none;" src="morango.jpeg" alt="">
+<img style="display: none;" src="mama.jpeg" alt="">
+<img style="display: none;" src="kiwi.jpeg" alt="">
+<img style="display: none;" src="morango.jpeg" alt="">
+<script>
+    let quantidade1Total = 0;
+    let carrinho = [];
+    let ingredientesAdicionados = {
+        'Abacaxi': 0,
+        'Maçã': 0,
+        'Morango': 0,
+        'Mamão': 0,
+        'Kiwi': 0,
+        'Banana': 0,
+        'Uva': 0,
+        'Pitaya': 0,
+        'Manga': 0,
+        'Granola': 0,
+        'Flocos de arroz': 0,
+        'Jujuba': 0,
+        'Amendoim': 0,
+        'Tapioca': 0,
+        'Leite em pó': 0,
+        'Coco ralado': 0,
+        'Disquete': 0,
+        'Chocobol': 0,
+        'Paçoca': 0,
+    };
+    let total = 0;
+    let taxaEntrega = 0;
+    let sobremesasAdicionadas = {
+        'Mousse Maracujá': 0,
+        'Mousse Ninho': 0,
+        'Mousse Morango': 0,
+        'Mousse Cupuaçu': 0,
+        'Mousse Limão': 0,
+        'Mousse Oreo': 0,
+        'Mousse Amendoim': 0,
+    };
+
+    function adicionar(tamanho, preco) {
+        carrinho.push({ tamanho, preco, ingredientes: [] });
+        total += preco;
+        let mensagem = `${tamanho} adicionado!`;
+        if (tamanho === 'Açaí - 300ml') {
+            mensagem += ' Você tem direito a 2 frutas, 2 ingredientes e 1 cobertura.';
+        } else if (tamanho === 'Açaí - 400ml') {
+            mensagem += ' Você tem direito a 3 frutas, 3 ingredientes e 1 cobertura.';
+        } else if (tamanho === 'Açaí - 500ml') {
+            mensagem += ' Você tem direito a 4 frutas, 4 ingredientes e 1 cobertura.';
+        }
+        quantidade1Total++;
+        document.getElementById('quantidade1').innerText = quantidade1Total;
+        Swal.fire(mensagem);
+        atualizarResumo();
+    }
+
+    function adicionarIngrediente(ingrediente, preco = 0) {
+        const ultimoAcaí = carrinho[carrinho.length - 1];
+        if (ultimoAcaí) {
+            const limiteIngredientes = ultimoAcaí.tamanho === 'Açaí - 300ml' ? 5 : ultimoAcaí.tamanho === 'Açaí - 400ml' ? 7 : 9;
+            if (ultimoAcaí.ingredientes.length < limiteIngredientes) {
+                ultimoAcaí.ingredientes.push(ingrediente);
+                ingredientesAdicionados[ingrediente]++;
+                total += preco;
+                atualizarResumo();
+                atualizarPopup();
+                if (ingrediente === 'Abacaxi') {
+                    Swal.fire({
+                        title: `${ingrediente} adicionado!`,
+                        imageUrl: 'abaca.jpeg',
+                        imageAlt: 'Imagem de Abacaxi',
+                        imageWidth: 130, // Diminuindo a largura da imagem em 50%
+                        imageHeight: 130 // Diminuindo a altura da imagem em 50%
+                    });
+                } else if (ingrediente === 'Maçã') {
+                    Swal.fire({
+                        title: `${ingrediente} adicionado!`,
+                        imageUrl: 'maca.jpeg',
+                        imageAlt: 'Imagem de Maçã',
+                        imageWidth: 130, // Diminuindo a largura da imagem em 50%
+                        imageHeight: 130 // Diminuindo a altura da imagem em 50%
+                    });
+                } else if (ingrediente === 'Morango') {
+                    Swal.fire({
+                        title: `${ingrediente} adicionado!`,
+                        imageUrl: 'morango.jpeg',
+                        imageAlt: 'Imagem de Morango',
+                        imageWidth: 130, // Diminuindo a largura da imagem em 50%
+                        imageHeight: 130 // Diminuindo a altura da imagem em 50%
+                    }); 
+                    } else if (ingrediente === 'Mamão') {
+                    Swal.fire({
+                        title: `${ingrediente} adicionado!`,
+                        imageUrl: 'mama.jpeg',
+                        imageAlt: 'Imagem de Morango',
+                        imageWidth: 130, // Diminuindo a largura da imagem em 50%
+                        imageHeight: 130 // Diminuindo a altura da imagem em 50%
+                    }); 
+                    } else if (ingrediente === 'Kiwi') {
+                    Swal.fire({
+                        title: `${ingrediente} adicionado!`,
+                        imageUrl: 'kiwi.jpeg',
+                        imageAlt: 'Imagem de Morango',
+                        imageWidth: 130, // Diminuindo a largura da imagem em 50%
+                        imageHeight: 130 // Diminuindo a altura da imagem em 50%
+                    });
+                    } else if (ingrediente === 'Banana') {
+                    Swal.fire({
+                        title: `${ingrediente} adicionado!`,
+                        imageUrl: 'bana.jpeg',
+                        imageAlt: 'Imagem de Morango',
+                        imageWidth: 130, // Diminuindo a largura da imagem em 50%
+                        imageHeight: 130 // Diminuindo a altura da imagem em 50%
+                    });  
+                    } else if (ingrediente === 'Uva') {
+                    Swal.fire({
+                        title: `${ingrediente} adicionado!`,
+                        imageUrl: 'uva.jpeg',
+                        imageAlt: 'Imagem de Morango',
+                        imageWidth: 130, // Diminuindo a largura da imagem em 50%
+                        imageHeight: 130 // Diminuindo a altura da imagem em 50%
+                    }); 
+                    } else if (ingrediente === 'Pitaya') {
+                    Swal.fire({
+                        title: `${ingrediente} adicionado!`,
+                        imageUrl: 'pita.jpeg',
+                        imageAlt: 'Imagem de Morango',
+                        imageWidth: 130, // Diminuindo a largura da imagem em 50%
+                        imageHeight: 130 // Diminuindo a altura da imagem em 50%
+                    }); 
+                    } else if (ingrediente === 'Manga') {
+                    Swal.fire({
+                        title: `${ingrediente} adicionado!`,
+                        imageUrl: 'manga.jpeg',
+                        imageAlt: 'Imagem de Morango',
+                        imageWidth: 130, // Diminuindo a largura da imagem em 50%
+                        imageHeight: 130 // Diminuindo a altura da imagem em 50%
+                    }); 
+                    } else if (ingrediente === 'Granola') {
+                    Swal.fire({
+                        title: `${ingrediente} adicionado!`,
+                        imageUrl: 'granola.jpeg',
+                        imageAlt: 'Imagem de Morango',
+                        imageWidth: 130, // Diminuindo a largura da imagem em 50%
+                        imageHeight: 130 // Diminuindo a altura da imagem em 50%
+                    }); 
+                    } else if (ingrediente === 'Flocos de arroz') {
+                    Swal.fire({
+                        title: `${ingrediente} adicionado!`,
+                        imageUrl: 'flocos.jpeg',
+                        imageAlt: 'Imagem de Morango',
+                        imageWidth: 130, // Diminuindo a largura da imagem em 50%
+                        imageHeight: 130 // Diminuindo a altura da imagem em 50%
+                    }); 
+                    } else if (ingrediente === 'Jujuba') {
+                    Swal.fire({
+                        title: `${ingrediente} adicionado!`,
+                        imageUrl: 'jujubas.jpeg',
+                        imageAlt: 'Imagem de Morango',
+                        imageWidth: 130, // Diminuindo a largura da imagem em 50%
+                        imageHeight: 130 // Diminuindo a altura da imagem em 50%
+                    }); 
+                    } else if (ingrediente === 'Amendoim') {
+                    Swal.fire({
+                        title: `${ingrediente} adicionado!`,
+                        imageUrl: 'amendoim.jpeg',
+                        imageAlt: 'Imagem de Morango',
+                        imageWidth: 130, // Diminuindo a largura da imagem em 50%
+                        imageHeight: 130 // Diminuindo a altura da imagem em 50%
+                    }); 
+                    } else if (ingrediente === 'Tapioca') {
+                    Swal.fire({
+                        title: `${ingrediente} adicionado!`,
+                        imageUrl: 'tapioca.jpeg',
+                        imageAlt: 'Imagem de Morango',
+                        imageWidth: 130, // Diminuindo a largura da imagem em 50%
+                        imageHeight: 130 // Diminuindo a altura da imagem em 50%
+                    }); 
+                    } else if (ingrediente === 'Leite em pó') {
+                    Swal.fire({
+                        title: `${ingrediente} adicionado!`,
+                        imageUrl: 'leite.jpeg',
+                        imageAlt: 'Imagem de Morango',
+                        imageWidth: 130, // Diminuindo a largura da imagem em 50%
+                        imageHeight: 130 // Diminuindo a altura da imagem em 50%
+                    }); 
+                    } else if (ingrediente === 'Coco ralado') {
+                    Swal.fire({
+                        title: `${ingrediente} adicionado!`,
+                        imageUrl: 'coco.jpeg',
+                        imageAlt: 'Imagem de Morango',
+                        imageWidth: 130, // Diminuindo a largura da imagem em 50%
+                        imageHeight: 130 // Diminuindo a altura da imagem em 50%
+                    }); 
+                    } else if (ingrediente === 'Disquete') {
+                    Swal.fire({
+                        title: `${ingrediente} adicionado!`,
+                        imageUrl: 'disquete.jpeg',
+                        imageAlt: 'Imagem de Morango',
+                        imageWidth: 130, // Diminuindo a largura da imagem em 50%
+                        imageHeight: 130 // Diminuindo a altura da imagem em 50%
+                    }); 
+                    } else if (ingrediente === 'Chocobol') {
+                    Swal.fire({
+                        title: `${ingrediente} adicionado!`,
+                        imageUrl: 'choco.jpeg',
+                        imageAlt: 'Imagem de Morango',
+                        imageWidth: 130, // Diminuindo a largura da imagem em 50%
+                        imageHeight: 130 // Diminuindo a altura da imagem em 50%
+                    }); 
+                    } else if (ingrediente === 'Paçoca') {
+                    Swal.fire({
+                        title: `${ingrediente} adicionado!`,
+                        imageUrl: 'paçoca.jpeg',
+                        imageAlt: 'Imagem de Morango',
+                        imageWidth: 130, // Diminuindo a largura da imagem em 50%
+                        imageHeight: 130 // Diminuindo a altura da imagem em 50%
+                    }); 
+                    } else if (ingrediente === 'Paçoca') {
+                    Swal.fire({
+                        title: `${ingrediente} adicionado!`,
+                        imageUrl: 'paçoca.jpeg',
+                        imageAlt: 'Imagem de Morango',
+                        imageWidth: 130, // Diminuindo a largura da imagem em 50%
+                        imageHeight: 130 // Diminuindo a altura da imagem em 50%
+                    }); 
+                } else {
+                    Swal.fire(`${ingrediente} adicionado!`);
+                }
+            } else {
+                Swal.fire('Limite de ingredientes atingido!');
+            }
+        } else {
+            Swal.fire('Escolha um Açaí!');
+        }
+    }
+        
+            function adicionarSobremesa(sobremesa, preco = 0) {
+                sobremesasAdicionadas[sobremesa]++;
+                total += preco;
+                atualizarResumo();
+                Swal.fire(`${sobremesa} adicionada como sobremesa!`);
+            }
+        
+            function atualizarResumo() {
+                const listaPedido = document.getElementById('lista-pedido');
+                listaPedido.innerHTML = '';
+                carrinho.forEach(item => {
+                    const li = document.createElement('li');
+                    li.textContent = `${item.tamanho}`;
+                    if (item.tamanho.includes('Açaí')) {
+                        li.style.backgroundColor = 'purple'; // cor da lista
+                        li.style.color = 'white';
+                    }
+                    listaPedido.appendChild(li);
+                    item.ingredientes.forEach(ingrediente => {
+                        const liIngrediente = document.createElement('li');
+                        liIngrediente.textContent = ` - ${ingrediente}`;
+                        listaPedido.appendChild(liIngrediente);
+                    });
+                });
+                for (const sobremesa in sobremesasAdicionadas) {
+                    if (sobremesasAdicionadas[sobremesa] > 0) {
+                        const liSobremesa = document.createElement('li');
+                        liSobremesa.textContent = ` - ${sobremesa}`;
+                        liSobremesa.style.backgroundColor = 'purple'; // Adicionando background roxo
+                        liSobremesa.style.color = 'white'; // Adicionando cor branca ao texto
+                        listaPedido.appendChild(liSobremesa);
+                    }
+                }
+                document.getElementById('valor-total').textContent = `Valor Total: R$${(total + taxaEntrega).toFixed(2)}`;
+            }
+        
+            function atualizarPopup() {
+                const listaIngredientesPopup = document.getElementById('lista-ingredientes-popup');
+                listaIngredientesPopup.innerHTML = '';
+                carrinho.forEach(item => {
+                    const liAcaí = document.createElement('li');
+                    liAcaí.textContent = item.tamanho;
+                    liAcaí.style.backgroundColor = 'purple';
+                    liAcaí.style.color = 'white';
+                    listaIngredientesPopup.appendChild(liAcaí);
+                    item.ingredientes.forEach(ingrediente => {
+                        const li = document.createElement('li');
+                        li.textContent = ` - ${ingrediente}`;
+                        listaIngredientesPopup.appendChild(li);
+                    });
+                });
+                for (const sobremesa in sobremesasAdicionadas) {
+                    if (sobremesasAdicionadas[sobremesa] > 0) {
+                        const liSobremesa = document.createElement('li');
+                        liSobremesa.textContent = `${sobremesa}: ${sobremesasAdicionadas[sobremesa]}`;
+                        listaIngredientesPopup.appendChild(liSobremesa);
+                    }
+                }
+            }
+        
+            function togglePopup() {
+                const popup = document.getElementById('popup');
+                popup.style.display = popup.style.display === 'none' ? 'block' : 'none';
+            }
+        
+            function atualizarValorEntrega() {
+                const bairro = document.getElementById('bairro').value;
+                taxaEntrega = parseFloat(bairro);
+                atualizarResumo();
+            }
+
+            function remover(tamanho, preco) {
+        const index = carrinho.findIndex(item => item.tamanho === tamanho);
+        if (index > -1) {
+            carrinho.splice(index, 1);
+            total -= preco;
+            atualizarResumo();
+            quantidade1Total = 0;
+            document.getElementById('quantidade1').innerText = quantidade1Total;
+            Swal.fire(`${tamanho} removido!`);
+        } 
+    }
+        
+             function removerIngrediente(ingrediente, preco = 0) {
+        const ultimoAcaí = carrinho[carrinho.length - 1];
+        if (ultimoAcaí && ingredientesAdicionados[ingrediente] > 0) {
+            const index = ultimoAcaí.ingredientes.indexOf(ingrediente);
+            if (index > -1) {
+                ultimoAcaí.ingredientes.splice(index, 1);
+                ingredientesAdicionados[ingrediente]--;
+                total -= preco;
+                atualizarResumo();
+                atualizarPopup();
+                Swal.fire(`${ingrediente} removido!`);
+            }
+        } else {
+            Swal.fire('Este ingrediente não está na lista!');
+        }
+    }
+        
+      function enviarPedido() {
+  const nome = document.getElementById('nome-cliente').value;
+  const endereco = document.getElementById('endereco').value;
+  const formaPagamento = document.getElementById('forma-pagamento').value;
+  const observacao = document.getElementById('obser').value;
+  const bairroSelecionado = document.getElementById('bairro').options[document.getElementById('bairro').selectedIndex].text;
+  const itens = document.getElementById('lista-pedido').innerText;
+  const totalFinal = (total + taxaEntrega).toFixed(2);
+
+  const pedido = {
+    nome,
+    endereco,
+    bairro: bairroSelecionado,
+    formaPagamento,
+    observacao,
+    itens,
+    total: totalFinal
+  };
+
+  fetch('https://acai-server-0sc0.onrender.com/pedidos', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify(pedido)
+})
+  .then(res => res.json())
+  .then(data => {
+    Swal.fire('😊 Pedido enviado com sucesso!');
+    limparLista();
+    location.reload();
+  })
+  .catch(err => {
+    console.error('Erro ao enviar pedido:', err);
+    Swal.fire('Pedido enviado.');
+  });
+}
+
+        </script>
+        
+                   
+     <br><br>
+     <footer>
+        <style>
+            footer {background-color: #292929;color: #fff;text-align: center;padding: 10px 0;
+            border-radius: 10px;}
+            .rodape ul {list-style: none;padding: 0;}
+            .rodape li {display: inline;margin: 0 10px;}
+            .rodape a {color: #fff;text-decoration: none;}
+            .rodape a:hover { text-decoration: underline;}
+            .wha { width: 2%;box-shadow: 10px, 10px, 20px black -10px -10px 20px black}
+            .inst {width: 2%;}
+            .whatsapp-link {position: fixed;width: 40px;height: 40px;bottom: 40px;right: 5px;border-radius: 50px;text-align: center;font-size: 30px;z-index: 1000;}
+            .car {width: 20%;margin-top: 3%; }
+            .car2 {width: 3%;position: fixed;position: fixed;width: 40px;height: 40px;bottom: 130px;right: 5px;text-align: center;font-size: 30px;z-index: 1000;background-color: rgb(165, 164, 164);border-radius: 30%;}
+            .car3 {width: 3%;position: fixed;position: fixed;width: 40px;height: 40px;bottom: 220px;right: 5px;text-align: center;font-size: 30px;z-index: 1000;background-color: rgb(165, 164, 164);border-radius: 30%;}
+        </style>
+        <div class="rodape">
+            <ul>
+                <li id="C1">CONTATOS:</li> <br>
+                 <img class="wha" src="whatsapp.png" alt=""> (99) 99224-7544
+                <li>
+                  <!-- <img id="C1" class="inst" src="instagram.png" alt=""><a style="font-size: 100%;"
+                        href="https://www.instagram.com/anacamiladesignerdefestas?igsh=YWVhYXN4bTZjNmxj&utm_source=qr">
+                        <b>Acesse nosso Instagram</b></a>--> 
+                    <a class="whatsapp-link" href="https://wa.me/55999992247544" target="_blank"><img
+                            class="whatsapp-link" src="whatsapp.png" alt=""></a>
+                </li>
+                <a href="#carrinho2"><img class="car2" src="carrinho-de-compras.png"></a>
+            </ul>
+            <!-- <li><b>Email:</b> itingadomaranhao@gmail.com</li><br><br> -->
+            <strong>Horario de atendimento:</strong>  Segunda a Domingo, das 00.00 as 00:00. <br>
+            <li><b>Endereço:</b> AV.01, S/N, Bairro: 02 <br> Itinga do Maranhão. <br>
+                
+            <a href="#topo"><img class="car3" src="img topo.png"></a>
+
+            <img class="car" src="cartao.webp" alt=""><br>
+            <a  href="https://wa.me/5599992247544" target="_blank"><li><i><u>Criado por: Carlos de Freitas Rocha. <br>Click aqui e faça seu orçamento.</u></i></li></a>
+            <p><a  href="https://wa.me/5599992247544" target="_blank"><img src="logo2.png" style="width: 50px;"></a></p>
+        </div>
+        <!-- <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d586.8913640512468!2d-47.52531222964978!3d-4.460210098186527!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e1!3m2!1spt-PT!2sbr!4v1742998556026!5m2!1spt-PT!2sbr" width="300" height="250" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe> -->
+    </footer>
+</body>
+</html>
