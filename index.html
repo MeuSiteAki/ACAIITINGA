@@ -941,11 +941,12 @@
     total: totalFinal
   };
 
-  fetch('https://acai-server-0sc0.onrender.com/pedidos', {
+  fetch('https://acai-server-1.onrender.com/pedido', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify(pedido)
 })
+
   .then(res => res.json())
   .then(data => {
     Swal.fire('😊 Pedido enviado com sucesso!');
