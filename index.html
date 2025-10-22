@@ -3,59 +3,53 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Açaiteria Tropical</title>
+  <title>Açaiteria Itinga</title>
 
   <!-- SweetAlert2 & QRCode -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
-  
 
   <!-- Firebase (FireStore) -->
   <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
-  import { getFirestore, collection, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
+    import { getFirestore, collection, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-  const firebaseConfig = {
-    apiKey: "SUA_API_KEY",
-    authDomain: "acai123-4ad1a.firebaseapp.com",
-    projectId: "acai123-4ad1a",
-    storageBucket: "acai123-4ad1a.firebasestorage.app",
-    messagingSenderId: "423472519123",
-    appId: "1:423472519123:web:b8795b57e347f473d7c126",
-    measurementId: "G-K86FBM1JE5"
-  };
+    const firebaseConfig = {
+      apiKey: "SUA_API_KEY",
+      authDomain: "acai123-4ad1a.firebaseapp.com",
+      projectId: "acai123-4ad1a",
+      storageBucket: "acai123-4ad1a.firebasestorage.app",
+      messagingSenderId: "423472519123",
+      appId: "1:423472519123:web:b8795b57e347f473d7c126",
+      measurementId: "G-K86FBM1JE5"
+    };
 
-  // Inicializa Firebase
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
-  const db = getFirestore(app);
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const db = getFirestore(app);
 
-  // Exemplo: salvar pedido
-  async function salvarPedido(pedido) {
-    try {
-      await addDoc(collection(db, "pedidos"), pedido);
-      console.log("✅ Pedido salvo no Firestore");
-    } catch (e) {
-      console.error("❌ Erro ao salvar pedido:", e);
-    }
-  }
-
-  // Exemplo: escutar pedidos
-  const pedidosRef = collection(db, "pedidos");
-  onSnapshot(pedidosRef, (snapshot) => {
-    snapshot.docChanges().forEach((change) => {
-      if (change.type === "added") {
-        console.log("📥 Novo pedido:", change.doc.data());
+    async function salvarPedido(pedido) {
+      try {
+        await addDoc(collection(db, "pedidos"), pedido);
+        console.log("✅ Pedido salvo no Firestore");
+      } catch (e) {
+        console.error("❌ Erro ao salvar pedido:", e);
       }
+    }
+
+    const pedidosRef = collection(db, "pedidos");
+    onSnapshot(pedidosRef, (snapshot) => {
+      snapshot.docChanges().forEach((change) => {
+        if (change.type === "added") {
+          console.log("📥 Novo pedido:", change.doc.data());
+        }
+      });
     });
-  });
 
-  // Disponibiliza no escopo global
-  window.__db = db;
-  window.__salvarPedido = salvarPedido;
-</script>
-
+    window.__db = db;
+    window.__salvarPedido = salvarPedido;
+  </script>
 
   <style>
     :root{
@@ -65,9 +59,14 @@
     }
     *{box-sizing:border-box}
     body{margin:0;font-family:"Inter",system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(180deg,#eaffea,var(--bg));color:var(--text)}
-    header{position:sticky;top:0;z-index:10;background:linear-gradient(90deg,var(--primary),var(--primary-dark));color:#fff;padding:16px 20px;box-shadow:var(--shadow);display:flex;align-items:center;gap:12px}
-    .logo{width:54px;height:54px;border-radius:50%;background:#fff;color:var(--primary-dark);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:18px;letter-spacing:0.5px;box-shadow:0 8px 20px rgba(0,0,0,0.2)}
-    .brand{font-size:20px;font-weight:800}
+
+    /* Header com logo elegante */
+    header{position:sticky;top:0;z-index:10;background:linear-gradient(90deg,var(--primary),var(--primary-dark));color:#fff;padding:12px 20px;box-shadow:var(--shadow);display:flex;align-items:center;gap:12px}
+    .logo-wrap{display:flex;align-items:center;gap:12px}
+    .logo-img{width:110px;height:110px;border-radius:22px;object-fit:cover;box-shadow:0 8px 18px rgba(0,0,0,0.35);border:2px solid rgba(255,255,255,0.35);animation:zoomIn 1.2s ease}
+    @keyframes zoomIn{from{transform:scale(0.8);opacity:0}to{transform:scale(1);opacity:1}}
+    .brand{font-size:28px;font-weight:800;letter-spacing:0.6px}
+
     .container{max-width:1024px;margin:20px auto;padding:0 16px 110px}
 
     .card{border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;margin-bottom:16px;color:#fff}
@@ -76,14 +75,20 @@
     .theme-purple{background:linear-gradient(135deg,#9b59b6,#8e44ad)}
     .theme-orange{background:linear-gradient(135deg,#f39c12,#d35400)}
     .theme-red{background:linear-gradient(135deg,#e74c3c,#c0392b)}
-    .card h3{margin:0 0 10px}
+    .card h3{margin:0 0 10px;font-size:18px}
 
+    /* Tamanhos */
     .sizes{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
     .size{background:#fff;color:#2d3142;border-radius:14px;padding:12px;text-align:center;font-weight:700;box-shadow:var(--shadow)}
-    .size img{width:64px;height:64px;margin-bottom:6px;filter:drop-shadow(0 6px 10px rgba(0,0,0,0.15))}
+    .size img{width:64px;height:64px;margin-bottom:6px;border-radius:50%;filter:drop-shadow(0 6px 10px rgba(0,0,0,0.15))}
     .size .sub{font-size:12px;color:#556}
     .size .price{margin-top:4px;color:#1b1f2a}
     .size input{margin-top:8px;width:26px;height:26px;accent-color:var(--primary)}
+
+    /* Toggle sizes (maior/centralizado) */
+    .toggle-wrap{display:flex;justify-content:center;margin:0 0 16px}
+    .toggle-btn{display:inline-flex;align-items:center;gap:10px;padding:16px 28px;border:none;border-radius:999px;background:linear-gradient(135deg,#27ae60,#2ecc71);color:#fff;font-weight:800;font-size:18px;cursor:pointer;box-shadow:0 10px 24px rgba(0,0,0,0.18);transition:.25s}
+    .toggle-btn:hover{transform:scale(1.05)}
 
     .options{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
     .option{background:#fff;color:#2d3142;border-radius:12px;padding:10px;display:flex;align-items:center;gap:10px;font-weight:600;box-shadow:var(--shadow)}
@@ -97,58 +102,72 @@
     .btn{border:none;border-radius:999px;padding:12px 16px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:8px;box-shadow:var(--shadow)}
     .btn.primary{background:var(--primary);color:#fff}
     .btn.secondary{background:var(--accent);color:#3b2400}
-    .btn.ghost{background:#fff;color:var(--primary-dark);border:2px solid #eee}
+    .btn.ghost{background:#fff;color:#27ae60;border:2px solid #eee}
+    .btn.whatsapp{background:#25D366;color:#fff;font-size:16px;justify-content:center;width:100%}
 
     .fab-cart{position:fixed;bottom:16px;right:16px;background:linear-gradient(135deg,var(--accent),#ffe58a);color:#3b2400;border-radius:999px;padding:14px 16px;display:inline-flex;align-items:center;gap:8px;box-shadow:0 18px 35px rgba(0,0,0,0.18);font-weight:800;border:none;cursor:pointer;z-index:9}
 
+    /* Carrinho com espaçamento reduzido */
     .cart-panel{position:fixed;top:0;right:0;width:min(460px,92vw);height:100vh;background:#ffffff;box-shadow:-12px 0 24px rgba(0,0,0,0.14);transform:translateX(105%);transition:transform .3s ease;z-index:10;display:grid;grid-template-rows:auto 1fr auto auto;border-left:6px solid var(--accent)}
     .cart-panel.open{transform:translateX(0)}
-    .cart-header{padding:14px 16px;background:linear-gradient(90deg,var(--primary),var(--primary-dark));color:#fff;display:flex;align-items:center;justify-content:space-between;font-weight:800}
-    .cart-items{padding:14px;overflow:auto;display:grid;gap:12px;background:#f9fdf9}
-    .cart-item{background:#fff;border:2px solid #eef1f5;border-radius:14px;padding:12px;box-shadow:var(--shadow);display:grid;gap:8px}
+    .cart-header{padding:10px 12px;background:linear-gradient(90deg,var(--primary),var(--primary-dark));color:#fff;display:flex;align-items:center;justify-content:space-between;font-weight:800}
+    .cart-items{padding:8px;overflow:auto;display:grid;gap:3px;background:#f9fdf9}
+    .cart-item{background:#fff;border:1px solid #eef1f5;border-radius:10px;padding:6px;box-shadow:var(--shadow);display:grid;gap:2px}
     .cart-item .top{display:flex;justify-content:space-between;align-items:center}
-    .cart-title{font-weight:800;color:#1b1f2a}
-    .cart-price{font-weight:800;color:#1b1f2a}
-    .list-row{font-size:13px;color:#334}
-    .remove{align-self:flex-end;background:#ffecec;border:1px solid #ffd0d0;color:var(--danger);border-radius:10px;padding:6px 10px;font-weight:700;cursor:pointer}
-    .empty{text-align:center;color:var(--muted);padding:18px}
-    .total-bar{background:#fff;padding:12px 16px;font-weight:800;text-align:right;border-top:2px solid #eef1f5}
+    .cart-title{font-weight:800;color:#1b1f2a;font-size:14px}
+    .cart-price{font-weight:800;color:#1b1f2a;font-size:14px}
+    .list-row{font-size:12px;color:#334;line-height:1.2}
+    .remove{align-self:flex-end;background:#ffecec;border:1px solid #ffd0d0;color:var(--danger);border-radius:8px;padding:2px 6px;font-weight:700;cursor:pointer;font-size:12px}
+    .empty{text-align:center;color:var(--muted);padding:10px}
+    .total-bar{background:#fff;padding:8px 12px;font-weight:800;text-align:right;border-top:1px solid #eef1f5}
 
-    .form{padding:12px;display:grid;gap:10px}
+    .form{padding:10px;display:grid;gap:8px;overflow-y:auto;max-height:240px}
     .label{font-size:12px;color:var(--muted);margin-bottom:4px}
 
-    .toast{position:fixed;bottom:25px;left:50%;transform:translateX(-50%);background:#fff;padding:16px 22px;border-radius:14px;box-shadow:var(--shadow);font-size:18px;font-weight:700;border:2px solid var(--primary);animation:fadeInOut 2.5s ease forwards;z-index:50}
+    footer{background:linear-gradient(90deg,#27ae60,#2ecc71);color:#fff;text-align:center;padding:20px 16px}
+    footer .row{max-width:1024px;margin:0 auto;display:grid;gap:8px}
+    footer .social{margin-top:10px;display:flex;justify-content:center;gap:16px}
+    footer a{color:#fff;text-decoration:none;font-weight:700;transition:.2s}
+    footer a:hover{color:#ffe58a}
+
+    .toast{position:fixed;bottom:25px;left:50%;transform:translateX(-50%);background:#fff;padding:16px 22px;border-radius:14px;box-shadow:var(--shadow);font-size:16px;font-weight:700;border:2px solid var(--primary);animation:fadeInOut 2.5s ease forwards;z-index:50}
     @keyframes fadeInOut{0%{opacity:0;transform:translate(-50%,14px)}10%{opacity:1;transform:translate(-50%,0)}85%{opacity:1}100%{opacity:0;transform:translate(-50%,14px)}}
 
     @media(max-width:640px){.sizes{grid-template-columns:1fr 1fr}}
     @media(max-width:420px){.sizes{grid-template-columns:1fr}}
-   
   </style>
 </head>
 <body>
   <header>
-    <div class="logo">AT</div>
-    <div class="brand">Açaiteria Tropical</div>
+    <div class="logo-wrap">
+      <img src="açai2.jpeg" alt="Logo Açaiteria" class="logo-img">
+      <div class="brand">Açaiteria Itinga</div>
+    </div>
   </header>
 
   <main class="container">
-    <section class="card theme-green">
+    <!-- Botão para mostrar/ocultar tamanhos (centralizado, maior) -->
+    <div class="toggle-wrap">
+      <button class="toggle-btn" id="toggleSizes">Mostrar tamanho do copo</button>
+    </div>
+
+    <section class="card theme-green" id="sizesCard" style="display:none;">
       <h3>Tamanho do copo</h3>
       <div class="sizes" id="sizeGroup">
         <label class="size">
-          <img style="border-radius: 50px; width: 70px; height: 70px;" src="açai.jpg" alt="Copo 300"/><br>
+          <img src="açai.jpg" alt="Copo 300"/><br>
           300ml<br><span class="sub">2 frutas • 2 ingredientes • 1 cobertura</span>
           <div class="price"><strong style="font-size: 20px; color: #108600;">R$ 10,00</strong></div>
           <input type="radio" name="size" value="300" data-price="10">
         </label>
         <label class="size">
-          <img style="border-radius: 50px; width: 70px; height: 70px;" src="açai.jpg" alt="Copo 400"/><br>
+          <img src="açai.jpg" alt="Copo 400"/><br>
           400ml<br><span class="sub">3 frutas • 3 ingredientes • 1 cobertura</span>
           <div class="price"><strong style="font-size: 20px; color: #108600;">R$ 15,00</strong></div>
           <input type="radio" name="size" value="400" data-price="15">
         </label>
         <label class="size">
-          <img style="border-radius: 50px; width: 70px; height: 70px;" src="açai.jpg" alt="Copo 500"/><br>
+          <img src="açai.jpg" alt="Copo 500"/><br>
           500ml<br><span class="sub">4 frutas • 4 ingredientes • 1 cobertura</span>
           <div class="price"><strong style="font-size: 20px; color: #108600;">R$ 20,00</strong></div>
           <input type="radio" name="size" value="500" data-price="20">
@@ -156,7 +175,7 @@
       </div>
     </section>
 
-    <section class="card theme-blue">
+    <section class="card theme-blue" id="fruitsSection">
       <h3>Frutas</h3>
       <div class="options" id="fruits"></div>
     </section>
@@ -186,7 +205,7 @@
     </section>
   </main>
 
-  <button class="fab-cart" id="toggleCart">🛒 Abrir carrinho</button>
+  <button class="fab-cart" id="toggleCart">Abrir carrinho</button>
 
   <aside class="cart-panel" id="cartPanel">
     <div class="cart-header">
@@ -195,16 +214,35 @@
     </div>
 
     <div class="cart-items" id="cartItems">
-      <div class="empty">Seu carrinho está vazio. Adicione um açaí para começar. 💚</div>
+      <div class="empty">Seu carrinho está vazio. Adicione um açaí para começar.</div>
     </div>
 
     <div class="total-bar" id="totalBar">Total: R$ 0,00</div>
 
+    <!-- Form com rolagem própria -->
     <div class="form">
       <div class="input"><span class="label">Nome</span><input id="name" type="text" placeholder="Seu nome" required></div>
       <div class="input"><span class="label">Telefone</span><input id="phone" type="tel" placeholder="(99) 9 9999-9999" required></div>
       <div class="input"><span class="label">Endereço</span><input id="address" type="text" placeholder="Rua, número" required></div>
-      <div class="input"><span class="label">Bairro</span><input id="neighborhood" type="text" placeholder="Bairro" required></div>
+      <div class="input">
+        <span class="label">Bairro</span>
+        <select id="neighborhood" required>
+          <option value="" selected disabled>Bairro</option>
+          <option value="Centro">Centro</option>
+          <option value="Coqueiral">Coqueiral</option>
+          <option value="Vila Emanuela">Vila Emanuela</option>
+          <option value="Célio Braz">Célio Braz</option>
+          <option value="Vila Samuel">Vila Samuel</option>
+          <option value="Jardim Planalto">Jardim Planalto</option>
+          <option value="Parq. Primavera">Parq. Primavera</option>
+          <option value="São Sebastião">São Sebastião</option>
+          <option value="Paraiso">Paraiso</option>
+          <option value="São João">São João</option>
+          <option value="Vila Jamily">Vila Jamily</option>
+          <option value="Itinga-PA">Itinga-PA</option>
+          <option value="Paulistão">Paulistão</option>
+        </select>
+      </div>
       <div class="input">
         <span class="label">Forma de pagamento</span>
         <select id="payment" required>
@@ -215,14 +253,21 @@
         </select>
       </div>
       <div class="actions" style="justify-content:flex-end;">
-        <button class="btn primary" id="sendWhatsapp">📲 Enviar pedido no WhatsApp</button>
+        <button class="btn whatsapp" id="sendWhatsapp">Enviar pedido no WhatsApp</button>
       </div>
       <div class="label" style="text-align:right;">Envio para: 55 99 9224-7544</div>
     </div>
   </aside>
 
-  <footer style="text-align:center;color:var(--muted);padding:20px 16px 90px;">
-    © 2025 Açaiteria Tropical — Feito com 💚 em Imperatriz, MA.
+  <footer>
+    <div class="row">
+      <div><strong>© 2025 Açaiteria Itinga</strong> — Feito com 💚 em Itinga do Maranhão, MA.</div>
+      <div class="social">
+        <a href="#" aria-label="Instagram">Instagram</a>
+        <a href="#" aria-label="Facebook">Facebook</a>
+        <a href="#" aria-label="WhatsApp">WhatsApp</a>
+      </div>
+    </div>
   </footer>
 
   <script>
@@ -231,7 +276,6 @@
     const INGREDIENTS = ["Granola","Leite em pó","Paçoca","Amendoim","Jujuba","Castanha"];
     const TOPPINGS = ["Chocolate","Caramelo","Leite condensado","Morango"];
 
-    // Ícones apenas no toast
     const EMOJI = {
       Banana:"🍌", Morango:"🍓", Manga:"🥭", Kiwi:"🥝", Uva:"🍇", Abacaxi:"🍍",
       Granola:"🥣", "Leite em pó":"🥛", Paçoca:"🥜", Amendoim:"🥜", Jujuba:"🍬", Castanha:"🌰"
@@ -249,6 +293,9 @@
     const ingredientsWrap = document.getElementById('ingredients');
     const toppingsWrap = document.getElementById('toppings');
 
+    const toggleSizesBtn = document.getElementById('toggleSizes');
+    const sizesCard = document.getElementById('sizesCard');
+
     const addToCartBtn = document.getElementById('addToCart');
     const resetBtn = document.getElementById('reset');
 
@@ -265,15 +312,17 @@
     const paymentInput = document.getElementById('payment');
     const sendWhatsappBtn = document.getElementById('sendWhatsapp');
 
+    const fruitsSection = document.getElementById('fruitsSection');
+
     // Estado
     let limits = { fruits: 0, ingredients: 0 };
     let cart = [];
 
-    // Render options
+    // Render options (sem ícones visuais na UI)
     function createOption(labelText, name, type = "checkbox") {
       const d = document.createElement('label');
       d.className = 'option';
-      d.innerHTML = `<input type="${type}" name="${name}" value="${labelText}">${labelText}`;
+      d.innerHTML = `<input type="${type}" name="${name}" value="${labelText}"> ${labelText}`;
       return d;
     }
     FRUITS.forEach(f => fruitsWrap.appendChild(createOption(f, 'fruits')));
@@ -284,7 +333,14 @@
     sizeRadios.forEach(r => r.checked = false);
     toppingsWrap.querySelectorAll('input[name="toppings"]').forEach(t => t.checked = false);
 
-    // Limites por tamanho (apenas para desabilitar além do máximo; seleção é opcional)
+    // Toggle de tamanhos
+    toggleSizesBtn.addEventListener('click', () => {
+      const visible = sizesCard.style.display !== 'none';
+      sizesCard.style.display = visible ? 'none' : 'block';
+      toggleSizesBtn.textContent = visible ? 'Mostrar tamanho do copo' : 'Ocultar tamanho do copo';
+    });
+
+    // Limites por tamanho
     function updateLimitsFromSize() {
       const selected = document.querySelector('input[name="size"]:checked')?.value;
       if (selected === '300') limits = { fruits: 2, ingredients: 2 };
@@ -295,10 +351,12 @@
       enforceLimits('ingredients', limits.ingredients);
     }
 
+    // Ao escolher tamanho, reset e rolar até frutas
     sizeRadios.forEach(r => r.addEventListener('change', () => {
       resetSelections(true);
       r.checked = true;
       updateLimitsFromSize();
+      fruitsSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }));
     updateLimitsFromSize();
 
@@ -316,6 +374,7 @@
       });
     }
 
+    // Toast com emoji (apenas no aviso)
     function showToast(text, emoji = '') {
       const toast = document.createElement('div');
       toast.className = 'toast';
@@ -341,8 +400,8 @@
       });
     });
 
-    function openCart(){cartPanel.classList.add('open');toggleCartBtn.textContent='🛒 Fechar carrinho'}
-    function closeCart(){cartPanel.classList.remove('open');toggleCartBtn.textContent='🛒 Abrir carrinho'}
+    function openCart(){cartPanel.classList.add('open');toggleCartBtn.textContent='Fechar carrinho'}
+    function closeCart(){cartPanel.classList.remove('open');toggleCartBtn.textContent='Abrir carrinho'}
     toggleCartBtn.addEventListener('click',()=>cartPanel.classList.contains('open')?closeCart():openCart());
     closeCartBtn.addEventListener('click',closeCart);
 
@@ -383,7 +442,7 @@
     function renderCart(){
       cartItems.innerHTML='';
       if(cart.length===0){
-        cartItems.innerHTML='<div class="empty">Seu carrinho está vazio. Adicione um açaí para começar. 💚</div>';
+        cartItems.innerHTML='<div class="empty">Seu carrinho está vazio. Adicione um açaí para começar.</div>';
         updateTotalBar(); return;
       }
       cart.forEach(item=>{
@@ -498,7 +557,7 @@
       if(!nameInput.value.trim())return alert('Informe seu nome.');
       if(!phoneInput.value.trim())return alert('Informe seu telefone.');
       if(!addressInput.value.trim())return alert('Informe seu endereço.');
-      if(!neighborhoodInput.value.trim())return alert('Informe seu bairro.');
+      if(!neighborhoodInput.value)return alert('Informe seu bairro.');
       if(!paymentInput.value)return alert('Selecione a forma de pagamento.');
 
       const total=cart.reduce((sum,i)=>sum+i.price,0);
@@ -517,7 +576,7 @@
         `Cliente: ${nameInput.value.trim()}`,
         `Telefone: ${phoneInput.value.trim()}`,
         `Endereço: ${addressInput.value.trim()}`,
-        `Bairro: ${neighborhoodInput.value.trim()}`,
+        `Bairro: ${neighborhoodInput.value}`,
         `Pagamento: ${paymentInput.value}`
       ].join('\n');
 
@@ -526,7 +585,7 @@
         : '';
 
       const message=[
-        '🍧 Pedido — Açaiteria Tropical',
+        'Pedido — Açaiteria Itinga',
         '==============================',
         itemsText,
         '==============================',
@@ -539,12 +598,11 @@
       const url=`https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
       window.open(url,'_blank');
 
-      // Salvar no Firestore
       const pedido = {
         cliente: nameInput.value.trim(),
         telefone: phoneInput.value.trim(),
         endereco: addressInput.value.trim(),
-        bairro: neighborhoodInput.value.trim(),
+        bairro: neighborhoodInput.value,
         pagamento: paymentInput.value,
         observacoes: document.getElementById('notes').value.trim(),
         itens: cart,
@@ -553,7 +611,6 @@
       };
       window.__salvarPedido?.(pedido);
 
-      // Atualiza a página automaticamente após enviar
       setTimeout(()=>location.reload(),1000);
     });
 
@@ -586,6 +643,9 @@
   </script>
 </body>
 </html>
+
+
+
 
 
 <!-- // Import the functions you need from the SDKs you need
