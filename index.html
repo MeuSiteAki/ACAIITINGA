@@ -322,6 +322,31 @@
   box-shadow: 0 10px 25px rgba(0,0,0,0.35);
   background: linear-gradient(135deg, #128C7E, #0d6d5a);
 }
+/* Garante que o SweetAlert2 fique sempre acima do carrinho */
+.swal2-container {
+  z-index: 2000 !important;
+}
+/* horario */
+.status-loja {
+  text-align: center;
+  font-size: 17px;
+  font-weight: 800;
+  margin: 15px auto;
+  padding: 5px ;
+  border-radius: 12px;
+  max-width: 380px;
+  box-shadow: var(--shadow);
+}
+
+.status-loja.aberto {
+  background: linear-gradient(135deg, #27ae60, #2ecc71);
+  color: #fff;
+}
+
+.status-loja.fechado {
+  background: linear-gradient(135deg, #c0392b, #e74c3c);
+  color: #fff;
+}
 
   </style>
 </head>
@@ -336,6 +361,8 @@
       <i class="fas fa-bars"></i>
     </button>
   </header>
+<!-- Aviso de horário -->
+<div id="statusLoja" class="status-loja"></div>
 
   <main class="container">
     <div class="toggle-wrap">
@@ -434,7 +461,7 @@
   <aside class="cart-panel" id="cartPanel">
     <div class="cart-header">
       <strong>🛒 Seu carrinho</strong>
-      <button class="btn secondary" id="closeCart">Fechar</button>
+      <button class="btn secondary" id="closeCart">Continuar</button>
     </div>
 
     <div class="cart-items" id="cartItems">
@@ -1023,6 +1050,58 @@
       sideMenu.classList.remove("open");
       document.getElementById("feedbackText").value = "";
     });
+
+    
+function atualizarStatusLoja() {
+  const agora = new Date();
+  const dia = agora.getDay(); // 0=Domingo, 1=Segunda, ..., 6=Sábado
+  const hora = agora.getHours();
+  const minuto = agora.getMinutes();
+
+  const statusEl = document.getElementById("statusLoja");
+  const toggleSizesBtn = document.getElementById("toggleSizes");
+
+  // Segunda-feira = fechado
+  if (dia === 1) {
+    statusEl.textContent = "Estamos fechados! (Segunda é folga)";
+    statusEl.className = "status-loja fechado";
+
+    // 🔒 Bloqueia botão "Mostrar copos"
+    toggleSizesBtn.disabled = true;
+    toggleSizesBtn.style.opacity = "0.5";
+    toggleSizesBtn.style.cursor = "not-allowed";
+    return;
+  }
+
+  // Horário de funcionamento: 15h00 até 23h00
+  const aberto = (hora > 8 || (hora === 8 && minuto >= 0)) && hora < 23; // mudar o horario de 8 p/ 15
+
+  if (aberto) {
+    statusEl.textContent = "✅ Estamos abertos! Das 15h às 23h";
+    statusEl.className = "status-loja aberto";
+
+    // 🔓 Libera botão
+    toggleSizesBtn.disabled = false;
+    toggleSizesBtn.style.opacity = "1";
+    toggleSizesBtn.style.cursor = "pointer";
+  } else {
+    statusEl.textContent = "❌ Estamos fechados! Aberto das 15h às 23h";
+    statusEl.className = "status-loja fechado";
+
+    // 🔒 Bloqueia botão
+    toggleSizesBtn.disabled = true;
+    toggleSizesBtn.style.opacity = "0.5";
+    toggleSizesBtn.style.cursor = "not-allowed";
+  }
+}
+
+// chama ao carregar a página
+window.addEventListener("load", atualizarStatusLoja);
+// opcional: atualiza a cada minuto
+setInterval(atualizarStatusLoja, 60000);
+
+
+
   </script>
 </body>
 </html>
