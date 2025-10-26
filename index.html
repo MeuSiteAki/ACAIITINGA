@@ -78,7 +78,6 @@
 
   /* Header fixo no topo */
   header {
-
     top: 0;
     z-index: 1000;
     background: linear-gradient(90deg, var(--primary), var(--primary-dark));
@@ -620,6 +619,27 @@
   padding-top: 10px;
   color: #ddd;
 }
+.big-toast {
+  position: fixed;
+  top: 20%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.8);
+  background: rgba(0,0,0,0.8);
+  color: #fff;
+  font-size: 30px;
+  font-weight: 900;
+  padding: 25px;
+  border-radius: 20px;
+  text-align: center;
+  z-index: 3000;
+  opacity: 0;
+  transition: all 0.4s ease;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+}
+.big-toast.show {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
 
 </style>
 
@@ -725,13 +745,22 @@
     }
 
     // Toast
-    function showToast(text, emoji = '') {
-      const toast = document.createElement('div');
-      toast.className = 'toast';
-      toast.textContent = `${emoji ? emoji + ' ' : ''}${text} adicionado`;
-      document.body.appendChild(toast);
-      setTimeout(() => toast.remove(), 2200);
-    }
+   function showToast(text, emoji = '') {
+  const toast = document.createElement('div');
+  toast.className = 'big-toast';
+  toast.innerHTML = `${emoji ? '<span style="font-size:60px;">' + emoji + '</span><br>' : ''}${text} adicionado!`;
+
+  document.body.appendChild(toast);
+
+  // animação de entrada
+  setTimeout(() => toast.classList.add('show'), 50);
+
+  // remove depois de 2s
+  setTimeout(() => {
+    toast.classList.remove('show');
+    setTimeout(() => toast.remove(), 200);
+  }, 1000);
+}
 
     // Atualiza o item atual (não mexe no carrinho)
     function updateCurrentItem() {
@@ -745,31 +774,36 @@
       // não atualiza cart aqui; só no addToCart()
     }
 
-    // Eventos para atualizar item atual
-    document.querySelectorAll('input[name="size"], input[name="fruits"], input[name="ingredients"], input[name="toppings"]').forEach(inp => {
-      inp.addEventListener('change', () => {
-        if (inp.name === 'fruits' || inp.name === 'ingredients') {
-          const max = inp.name === 'fruits' ? limits.fruits : limits.ingredients;
-          const inputs = document.querySelectorAll(`input[name="${inp.name}"]`);
-          const count = Array.from(inputs).filter(i => i.checked).length;
-          if (count > max) {
-            inp.checked = false;
-          } else if (inp.checked) {
-            const emoji = EMOJI[inp.value] || '';
-            showToast(inp.value, emoji);
-          }
-          enforceLimits(inp.name, max);
-        }
-        if (inp.name === 'size') {
-          updateLimitsFromSize();
-          fruitsSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-        updateCurrentItem();
-      });
-    });
-    document.getElementById('notes').addEventListener('input', updateCurrentItem);
-    updateLimitsFromSize();
+   // Eventos para atualizar item atual
+document.querySelectorAll('input[name="size"], input[name="fruits"], input[name="ingredients"], input[name="toppings"]').forEach(inp => {
+  inp.addEventListener('change', () => {
+    if (inp.name === 'fruits' || inp.name === 'ingredients') {
+      const max = inp.name === 'fruits' ? limits.fruits : limits.ingredients;
+      const inputs = document.querySelectorAll(`input[name="${inp.name}"]`);
+      const count = Array.from(inputs).filter(i => i.checked).length;
+      if (count > max) {
+        inp.checked = false;
+      } else if (inp.checked) {
+        const emoji = EMOJI[inp.value] || '';
+        showToast(inp.value, emoji);
+      }
+      enforceLimits(inp.name, max);
+    }
+
+    if (inp.name === 'size') {
+      // 🔥 Sempre que escolher um copo, limpa frutas, ingredientes e cobertura
+      document.querySelectorAll('input[name="fruits"]').forEach(i => i.checked = false);
+      document.querySelectorAll('input[name="ingredients"]').forEach(i => i.checked = false);
+      document.querySelectorAll('input[name="toppings"]').forEach(t => t.checked = false);
+
+      updateLimitsFromSize();
+      fruitsSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
     updateCurrentItem();
+  });
+});
+
 
     // Adicionar ao carrinho
     function addToCart() {
@@ -1100,35 +1134,16 @@ window.addEventListener("load", atualizarStatusLoja);
 // opcional: atualiza a cada minuto
 setInterval(atualizarStatusLoja, 60000);
 
-
+// Bloqueios de segurança (mantidos como no original)
+document.addEventListener('keydown', function (e) {
+    if (e.ctrlKey && (e.key === 'u' || e.key === 'U')) { e.preventDefault(); }
+    if (e.key === 'F12') { e.preventDefault(); }
+});
+document.addEventListener('keydown', function (event) {
+    if (event.ctrlKey && event.shiftKey && event.key === 'I') { event.preventDefault(); }
+});
+document.addEventListener('contextmenu', function (event) { event.preventDefault(); });
 
   </script>
 </body>
 </html>
-
-
-
-
-
-
-<!-- // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyBA4Vw5sqCEcrOfU61HTa4XZWRqsMuvUzg",
-  authDomain: "acai123-4ad1a.firebaseapp.com",
-  projectId: "acai123-4ad1a",
-  storageBucket: "acai123-4ad1a.firebasestorage.app",
-  messagingSenderId: "423472519123",
-  appId: "1:423472519123:web:b8795b57e347f473d7c126",
-  measurementId: "G-K86FBM1JE5"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app); -->
