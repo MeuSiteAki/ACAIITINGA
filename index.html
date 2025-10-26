@@ -415,7 +415,7 @@
     <section class="card theme-red">
       <h3><i class="fas fa-comment-dots"></i> Observações</h3>
       <div class="input">
-        <textarea id="notes" rows="3" placeholder="Ex.: pouco xarope, sem granola, ponto do açaí… (opcional)"></textarea>
+        <textarea id="notes" rows="2" placeholder="Ex.: pouco xarope, sem granola, ponto do açaí… (opcional)"></textarea>
       </div>
       <div class="actions" style="margin-top:10px;">
         <button class="btn ghost" id="reset">Limpar escolhas</button>
@@ -781,23 +781,36 @@ document.querySelectorAll('input[name="size"], input[name="fruits"], input[name=
       const max = inp.name === 'fruits' ? limits.fruits : limits.ingredients;
       const inputs = document.querySelectorAll(`input[name="${inp.name}"]`);
       const count = Array.from(inputs).filter(i => i.checked).length;
+
       if (count > max) {
         inp.checked = false;
       } else if (inp.checked) {
         const emoji = EMOJI[inp.value] || '';
         showToast(inp.value, emoji);
+
+        // 🔥 Quando atingir o limite, rola para a próxima seção
+        if (count === max) {
+          if (inp.name === 'fruits') {
+            document.getElementById('ingredients').scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+          if (inp.name === 'ingredients') {
+            document.getElementById('toppings').scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        }
       }
       enforceLimits(inp.name, max);
     }
 
     if (inp.name === 'size') {
-      // 🔥 Sempre que escolher um copo, limpa frutas, ingredientes e cobertura
+      // sempre que escolher copo, limpa seleções anteriores
       document.querySelectorAll('input[name="fruits"]').forEach(i => i.checked = false);
       document.querySelectorAll('input[name="ingredients"]').forEach(i => i.checked = false);
       document.querySelectorAll('input[name="toppings"]').forEach(t => t.checked = false);
 
       updateLimitsFromSize();
-      fruitsSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+      // 🔥 Vai direto para frutas
+      document.getElementById('fruitsSection').scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 
     updateCurrentItem();
