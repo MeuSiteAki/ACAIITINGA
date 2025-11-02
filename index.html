@@ -5,16 +5,14 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Açaiteria Itinga</title>
 
-  <!-- SweetAlert2 & QRCode -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-  <!-- Firebase (FireStore) -->
+  <!-- Firebase Firestore -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
-    import { getFirestore, collection, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "SUA_API_KEY",
@@ -27,445 +25,378 @@
     };
 
     const app = initializeApp(firebaseConfig);
-    const analytics = getAnalytics(app);
     const db = getFirestore(app);
 
-    async function salvarPedido(pedido) {
+    window.salvarPedido = async function(pedido) {
       try {
         await addDoc(collection(db, "pedidos"), pedido);
-        console.log("✅ Pedido salvo no Firestore");
       } catch (e) {
-        console.error("❌ Erro ao salvar pedido:", e);
+        console.error("Erro ao salvar pedido:", e);
+        throw e;
       }
-    }
-
-    const pedidosRef = collection(db, "pedidos");
-    onSnapshot(pedidosRef, (snapshot) => {
-      snapshot.docChanges().forEach((change) => {
-        if (change.type === "added") {
-          console.log("📥 Novo pedido:", change.doc.data());
-        }
-      });
-    });
-
-    window.__db = db;
-    window.__salvarPedido = salvarPedido;
+    };
   </script>
 
   <style>
-   :root {
-    --primary: #8e44ad;
-    --primary-dark: #6d2c91;
-    --accent: #f1c40f;
-    --danger: #e74c3c;
-    --bg: #faf6ff;
-    --text: #2d3142;
-    --muted: #7786a5;
-    --card: #ffffff;
-    --shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-    --radius: 16px;
-  }
+    :root {
+      --primary: #8e44ad;
+      --primary-dark: #6d2c91;
+      --accent: #f1c40f;
+      --bg: #faf6ff;
+      --text: #2d3142;
+      --shadow: 0 8px 20px rgba(0,0,0,0.08);
+      --radius: 16px;
+    }
+    * { box-sizing: border-box }
+    body { margin:0; font-family:"Inter",system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; background:linear-gradient(180deg,#f8eaff,var(--bg)); color:var(--text); padding-bottom:90px; }
 
-  * { box-sizing: border-box }
+    header {
 
-  body {
-    margin: 0;
-    font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    background: linear-gradient(180deg, #f8eaff, var(--bg));
-    color: var(--text);
-    padding-bottom: 70px; /* espaço para o resumo fixo */
-  }
+  top: 0; left: 0; right: 0;
 
-  /* Header fixo no topo */
-  header {
-    top: 0;
-    z-index: 1000;
-    background: linear-gradient(90deg, var(--primary), var(--primary-dark));
-    color: #fff;
-    padding: 12px 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: var(--shadow);
-  }
-
-  .logo-wrap { display: flex; align-items: center; gap: 12px; }
-  .logo-img { width: 100px; height: 100px; border-radius: 20px; object-fit: cover; }
-  .brand { font-size: 28px; font-weight: 800; }
-
-  .btn-menu-header {
-    
-    background: transparent; border: none; color: #fff; font-size: 28px; cursor: pointer; transition: transform 0.2s;
-  }
-  .btn-menu-header:hover { transform: translateY(-50%) scale(1.2); color: #ffe58a; }
-
-  .container { max-width: 1024px; margin: 20px auto; padding: 0 16px 10px }
-
-  /* Cards */
-  .card { border-radius: var(--radius); box-shadow: var(--shadow); padding: 16px; margin-bottom: 16px; color: #fff; }
-  .theme-purple { background: linear-gradient(135deg, #9b59b6, #8e44ad) }
-  .theme-pink   { background: linear-gradient(135deg, #d2527f, #8e44ad) }
-  .theme-vinho  { background: linear-gradient(135deg, #6d214f, #b33771) }
-  .theme-orange { background: linear-gradient(135deg, #f39c12, #d35400) }
-  .theme-red    { background: linear-gradient(135deg, #e74c3c, #c0392b) }
-  .card h3 { margin: 0 0 10px; font-size: 22px }
-
-  /* Tamanhos */
-  .sizes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px }
-  .size {
-    background: #fff; color: #2d3142;
-    border-radius: 14px; padding: 12px; text-align: center;
-    font-weight: 700; box-shadow: var(--shadow);
-  }
-  .size img {
-    width: 64px; height: 64px; margin-bottom: 6px;
-    border-radius: 50%;
-    filter: drop-shadow(0 6px 10px rgba(0,0,0,0.15));
-  }
-  .size .sub { font-size: 12px; color: #556 }
-  .size .price { margin-top: 4px; color: var(--primary-dark) }
-
-  /* Opções */
-  .options { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
-  .option {
-    background: #fff; color: #2d3142;
-    border-radius: 12px; padding: 10px;
-    display: flex; align-items: center; gap: 10px;
-    font-weight: 600; box-shadow: var(--shadow);
-  }
-  .option.disabled { opacity: .5; pointer-events: none }
-
-  input[type=checkbox], input[type=radio] {
-    width: 26px; height: 26px;
-    accent-color: var(--primary); cursor: pointer;
-  }
-
-  /* Inputs */
-  .input textarea, .input input, .input select {
-    width: 100%; border: 2px solid #eaeef5; border-radius: 10px;
-    padding: 10px; font-size: 14px; outline: none; background: #fff; color: #2d3142;
-  }
-  .input textarea:focus, .input input:focus, .input select:focus {
-    border-color: var(--primary);
-    box-shadow: 0 0 0 4px rgba(142,68,173,0.12);
-  }
-
-  /* Botões */
-  .actions { display: flex; gap: 12px; flex-wrap: wrap }
-  .btn {
-    border: none; border-radius: 999px;
-    padding: 12px 16px; font-weight: 700; cursor: pointer;
-    display: inline-flex; align-items: center; gap: 8px;
-    box-shadow: var(--shadow);
-  }
-  .btn.primary   { background: var(--primary); color: #fff }
-  .btn.secondary { background: var(--accent);  color: #3b2400 }
-  .btn.ghost     { background: #fff; color: var(--primary-dark); border: 2px solid #eee }
-  .btn.whatsapp  {
-    background: #25D366; color: #fff; font-size: 16px;
-    justify-content: center; width: 100%;
-  }
-
-  /* Carrinho */
-  .cart-panel {
-    position: fixed; top: 0; right: 0;
-    width: min(400px, 90vw); height: 100vh;
-    background: #fdf9ff;
-    box-shadow: -12px 0 24px rgba(0,0,0,0.14);
-    transform: translateX(105%);
-    transition: transform 0.3s ease;
-    z-index: 1100; /* acima do header/logo */
-    display: flex; flex-direction: column;
-    border-left: 6px solid #9b59b6;
-    border-radius: 16px 0 0 16px;
-  }
-  .cart-panel.open { transform: translateX(0) }
-
-  .cart-header {
-    padding: 16px;
-    background: linear-gradient(90deg, #9b59b6, #8e44ad);
-    color: #fff;
-    display: flex; align-items: center; justify-content: space-between;
-    font-weight: 800;
-    border-radius: 16px 0 0 0;
-  }
-
-  .cart-items {
-    flex-grow: 1; overflow-y: auto; padding: 8px;
-    display: grid; gap: 6px;
-  }
-  .cart-item {
-    background: #fff; border: 1px solid #eef1f5;
-    border-radius: 12px; padding: 10px;
-    box-shadow: var(--shadow);
-  }
-  .cart-title { font-weight: 800; font-size: 15px; color: #1b1f2a }
-  .cart-price { font-weight: 800; font-size: 15px; color: #8e44ad }
-
-  .total-bar {
-    background: #f3e5f5; padding: 12px; font-weight: 800;
-    text-align: right; font-size: 18px;
-    border-top: 2px solid #eaeef5; color: #8e44ad;
-  }
-
-  /* Form no carrinho */
-  .form { padding: 12px; display: grid; gap: 8px }
-
-  /* Resumo fixo do pedido */
-.cart-summary {
-  position: fixed;
-  bottom: 0; left: 0; right: 0;
-  background: var(--primary-dark);
+  background: linear-gradient(90deg, var(--primary), var(--primary-dark));
   color: #fff;
-  display: flex;
-  justify-content: space-between; /* garante que cada lado fique alinhado */
-  align-items: center;
   padding: 12px 20px;
-  font-weight: 700;
-  font-size: 16px;
-  box-shadow: 0 -4px 12px rgba(0,0,0,0.15);
-  z-index: 950;
-  gap: 20px; /* espaço entre os lados */
-}
-
-.cart-summary .left {
   display: flex;
-  flex-direction: column; /* 🔥 coloca Itens e Total um embaixo do outro */
-  align-items: flex-start;
-  gap: 6px;
+  align-items: center;
+  justify-content: center;   /* centraliza conteúdo */
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 
-.cart-summary .badge {
-  color: rgb(255, 255, 255);
-  border-radius: 999px;
-  padding: 6px 10px;
-  font-weight: 800;
+.logo-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;   /* garante centralização */
 }
 
-#summaryOpen {
-  background: linear-gradient(135deg, #25D366, #128C7E);
-  color: #fff;
-  font-size: 18px;
-  font-weight: 800;
-  padding: 14px 28px;
-  border: none;
-  border-radius: 50px;
+.logo-img {
+  width: 250px;   /* aumenta largura */
+  height: auto;   /* mantém proporção */
+  border-radius: 16px;
+  object-fit: cover;
+}
+
+    .card { border-radius:var(--radius); box-shadow:var(--shadow); padding:16px; margin-bottom:16px; color:#fff; }
+    .theme-purple { background:linear-gradient(135deg,#9b59b6,#8e44ad) }
+    .theme-orange { background:linear-gradient(135deg,#f39c12,#d35400) }
+    .theme-pink   { background:linear-gradient(135deg,#d2527f,#8e44ad) }
+    .theme-vinho  { background:linear-gradient(135deg,#6d214f,#b33771) }
+    .theme-red    { background:linear-gradient(135deg,#e74c3c,#c0392b) }
+    .theme-green  { background:linear-gradient(135deg,#27ae60,#145a32) }
+    .card h3 { margin:0 0 10px; font-size:22px }
+
+    .sizes { display:grid; grid-template-columns: repeat(2,1fr); gap:12px; }
+    .size { background:#fff; color:#2d3142; border-radius:14px; padding:12px; text-align:center; font-weight:700; box-shadow: var(--shadow); }
+    .size img { width:64px; height:64px; border-radius:12px; object-fit:cover; }
+    .size .sub { font-size:12px; color:#556 }
+    .size .price { margin-top:4px; color:#6d2c91; font-weight:800; }
+
+    .toggle-wrap { text-align:center; margin:20px 0 }
+    .toggle-btn {
+      background:linear-gradient(135deg,#9b59b6,#8e44ad); color:#fff; font-size:18px; font-weight:800;
+      padding:14px 24px; border:none; border-radius:50px; cursor:pointer; box-shadow:0 10px 25px rgba(0,0,0,0.25);
+      transition:transform .25s, box-shadow .25s;
+    }
+    .toggle-btn:hover { transform:scale(1.05); box-shadow:0 14px 35px rgba(0,0,0,0.35); }
+
+    .options { display:grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap:10px; }
+    .option { background:#fff; color:#2d3142; border-radius:12px; padding:10px; display:flex; align-items:center; gap:10px; font-weight:600; box-shadow: var(--shadow); }
+    .option input { margin-right:8px; }
+    .option.disabled { opacity:.5; pointer-events:none }
+
+    @media (max-width: 640px) {
+      #fruits, #ingredients, #toppings, #extras, #drinks { grid-template-columns: 1fr 1fr; }
+    }
+
+    .btn { border:none; border-radius:999px; padding:12px 16px; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:8px; box-shadow:var(--shadow); }
+    .btn.primary { background:var(--primary); color:#fff }
+    .btn.secondary { background:var(--accent); color:#3b2400 }
+    .btn.ghost { background:#fff; color:#6d2c91; border:2px solid #eee }
+    .btn.whatsapp { background:#25D366; color:#fff; justify-content:center; width:100%; }
+
+    .add-to-cart-wrap { text-align:center; margin:25px 0; }
+    .add-to-cart-big {
+      background:linear-gradient(135deg,#029402,#47ad44); color:#fff; font-size:22px; font-weight:800;
+      border:none; border-radius:50px; cursor:pointer; width:100%; max-width:380px;
+      padding:14px 24px;
+    }
+
+    .cart-panel { position:fixed; top:0; right:0; width:min(400px,90vw); height:100vh; background:#fff; transform:translateX(105%); transition:.3s; z-index:1100; display:flex; flex-direction:column; }
+    .cart-panel.open { transform:translateX(0) }
+    .cart-header { padding:16px; background:linear-gradient(90deg,#9b59b6,#8e44ad); color:#fff; display:flex; align-items:center; justify-content:space-between; font-weight:800; }
+    .cart-items { flex-grow:1; overflow-y:auto; padding:8px; display:grid; gap:6px; }
+    .cart-item { background:#fff; border:1px solid #eef1f5; border-radius:12px; padding:10px; box-shadow:var(--shadow); }
+    .cart-title { font-weight:800; font-size:15px; color:#1b1f2a }
+    .cart-price { font-weight:800; font-size:15px; color:#8e44ad }
+    .list-row { margin-top:6px; color:#333 }
+    .total-bar { background:#f3e5f5; padding:12px; font-weight:800; text-align:right; font-size:18px; border-top:2px solid #eaeef5; color:#8e44ad; }
+
+    .form { padding:12px; display:grid; gap:8px }
+    .input textarea, .input input, .input select { width:100%; border:2px solid #eaeef5; border-radius:10px; padding:10px; font-size:14px; outline:none; background:#fff; color:#2d3142; }
+    .input textarea:focus, .input input:focus, .input select:focus { border-color:var(--primary); box-shadow:0 0 0 4px rgba(142,68,173,0.12); }
+
+    .cart-summary { position:fixed; bottom:0; left:0; right:0; background:var(--primary-dark); color:#fff; display:flex; justify-content:space-between; align-items:center; padding:12px 20px; font-weight:700; font-size:16px; box-shadow:0 -4px 12px rgba(0,0,0,0.15); z-index:950; gap:20px; }
+    .cart-summary .left { display:flex; flex-direction:column; align-items:flex-start; gap:6px; }
+    .cart-summary .badge { color:#fff; border-radius:999px; padding:6px 10px; font-weight:800; background:rgba(255,255,255,0.2); }
+    #summaryOpen { background:linear-gradient(135deg,#25D366,#128C7E); color:#fff; font-size:15px; font-weight:800; border:none; border-radius:50px; cursor:pointer; box-shadow:0 6px 15px rgba(0,0,0,0.25); transition:transform .25s, box-shadow .25s; }
+    #summaryOpen:hover { transform:scale(1.08); box-shadow:0 10px 25px rgba(0,0,0,0.35); background:linear-gradient(135deg,#128C7E,#0d6d5a); }
+
+    .big-toast {
+      position: fixed; top: 17%; left: 50%; transform: translate(-50%, -50%) scale(0.9);
+      background: rgba(0,0,0,0.85); color: #fff; font-size: 22px; font-weight: 900;
+      padding: 20px; border-radius: 16px; text-align: center; z-index: 3000;
+      opacity: 0; transition: all 0.4s ease; min-width: 220px;
+    }
+    .big-toast.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+
+    #btnTop {
+      position:fixed; bottom:120px; right:20px; z-index:1000;
+      background:#8e44ad; color:#fff; border:none; border-radius:50%;
+      width:50px; height:50px; font-size:22px; cursor:pointer;
+      box-shadow:0 4px 12px rgba(0,0,0,0.3);
+    }
+
+    footer {
+      position:fixed; bottom:0; left:0; right:0;
+      background:#8e44ad; color:#fff; text-align:center; padding:10px;
+    }
+    footer button {
+      background:#fff; color:#8e44ad; border:none; padding:10px 20px;
+      border-radius:20px; font-weight:700; cursor:pointer;
+    }
+
+    .side-menu {
+      position:fixed; bottom:0; right:-320px; width:300px; height:100%;
+      background:#fff; box-shadow:-6px 0 15px rgba(0,0,0,0.2);
+      transition:right .3s ease; display:flex; flex-direction:column; z-index:1200;
+    }
+    .side-menu.open { right:0; }
+    .side-header { background:#8e44ad; color:#fff; padding:15px; display:flex; justify-content:space-between; align-items:center; }
+    .side-form { padding:15px; display:flex; flex-direction:column; gap:10px; }
+    .side-form textarea { flex:1; min-height:120px; padding:10px; border:1px solid #ccc; border-radius:8px; }
+   
+   /* aumenta o tamanho dos checkboxes e radios */
+.option input[type="checkbox"],
+.option input[type="radio"] {
+  width: 22px;
+  height: 22px;
+  transform: scale(1); /* aumenta a escala */
+  margin-right: 10px;
   cursor: pointer;
-  box-shadow: 0 6px 15px rgba(0,0,0,0.25);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
-
-#summaryOpen:hover {
-  transform: scale(1.08);
-  box-shadow: 0 10px 25px rgba(0,0,0,0.35);
-  background: linear-gradient(135deg, #128C7E, #0d6d5a);
-}
-
-  .cart-summary button {
-    background: #fff; color: var(--primary-dark);
-    border: none; border-radius: 999px;
-    padding: 8px 14px; font-weight: 700; cursor: pointer;
-  }
-
-  /* Botão mostrar/ocultar copos */
-  .toggle-wrap { text-align:center; margin:20px 0 }
-  .toggle-btn {
-    background: linear-gradient(135deg, #9b59b6, #8e44ad);
-    color: #fff; font-size: 22px; font-weight: 800;
-    padding: 18px 40px; border: none; border-radius: 50px;
-    cursor: pointer; box-shadow: 0 10px 25px rgba(0,0,0,0.25);
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
-  }
-  .toggle-btn:hover { transform: scale(1.07); box-shadow: 0 14px 35px rgba(0,0,0,0.35) }
-
-  /* Side menu */
-  .side-menu {
-    position: fixed; top: 0; right: -320px;
-    width: 300px; height: 100%;
-    background: #fff; box-shadow: -6px 0 15px rgba(0,0,0,0.2);
-    transition: right 0.3s ease; z-index: 1002;
-    display: flex; flex-direction: column;
-  }
-  .side-menu.open { right: 0; }
-  .side-header { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: var(--primary); color: #fff; }
-  .side-header h3 { margin: 0; font-size: 18px; }
-  .side-header button { background: transparent; border: none; color: #fff; font-size: 20px; cursor: pointer; }
-  .side-form { padding: 15px; display: flex; flex-direction: column; gap: 10px; }
-  .side-form textarea { width: 100%; height: 120px; padding: 10px; border-radius: 8px; border: 1px solid #ccc; resize: vertical; }
-  .btn-send {
-    background: #25D366; color: #fff; border: none;
-    padding: 12px; border-radius: 8px; font-weight: bold;
-    cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
-  }
-  .btn-send:hover { background: #1ebe5d; }
-
-  /* Media queries */
-  @media (max-width: 640px) { .sizes { grid-template-columns: 1fr 1fr } }
-  @media (max-width: 420px) { .sizes { grid-template-columns: 1fr } }
-
-  #summaryOpen {
-  background: linear-gradient(135deg, #25D366, #128C7E); /* verde estilo WhatsApp */
-  color: #fff;
-  font-size: 15px;
-  font-weight: 800;
-
-  border: none;
-  border-radius: 50px;
-  cursor: pointer;
-  box-shadow: 0 6px 15px rgba(0,0,0,0.25);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-}
-
-#summaryOpen:hover {
-  transform: scale(1.08);
-  box-shadow: 0 10px 25px rgba(0,0,0,0.35);
-  background: linear-gradient(135deg, #128C7E, #0d6d5a);
-}
-/* Garante que o SweetAlert2 fique sempre acima do carrinho */
-.swal2-container {
-  z-index: 2000 !important;
-}
-/* horario */
-.status-loja {
+ .side-form button { background:#25D366; color:#fff; border:none; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer; }
+ /* horario */
+ .aviso-horario {
   text-align: center;
-  font-size: 17px;
-  font-weight: 800;
-  margin: 15px auto;
-  padding: 5px ;
-  border-radius: 12px;
-  max-width: 380px;
-  box-shadow: var(--shadow);
-}
-
-.status-loja.aberto {
-  background: linear-gradient(135deg, #27ae60, #2ecc71);
+  padding: 14px;
+  font-size: 16px;
+  font-weight: 600;
   color: #fff;
+  border-radius: 10px;
+}
+.aviso-aberto {
+  background: linear-gradient(90deg, #27ae60, #2ecc71); /* verde */
+}
+.aviso-fechado {
+  background: linear-gradient(90deg, #c0392b, #e74c3c); /* vermelho */
 }
 
-.status-loja.fechado {
-  background: linear-gradient(135deg, #c0392b, #e74c3c);
-  color: #fff;
-}
-
+ 
   </style>
 </head>
 
 <body>
+
+  <!-- resto do seu site -->
+
   <header>
     <div class="logo-wrap">
-      <img src="açai2.jpeg" alt="Logo Açaiteria" class="logo-img">
-      <div class="brand">Açaiteria Itinga</div>
-    </div>
-    <button id="btnMenu" class="btn-menu-header" aria-label="Abrir menu lateral">
-      <i class="fas fa-bars"></i>
-    </button>
+      <img src="acaizap.jpg" alt="Logo Açaiteria" class="logo-img">
+      <!-- <strong>Açaiteria Itinga</strong> -->
+    </div>  
   </header>
-<!-- Aviso de horário -->
-<div id="statusLoja" class="status-loja"></div>
+<br>
+<script>
+function verificarHorario() {
+  const agora = new Date();
+  const dia = agora.getDay(); // 0=Dom, 1=Seg, ..., 6=Sáb
+  const hora = agora.getHours();
+  const minuto = agora.getMinutes();
+
+  const aviso = document.getElementById("aviso-horario");
+
+  // Quinta-feira (dia 4) = fechado
+  const fechadoHoje = (dia === 4);
+
+  // Horário de funcionamento: 15h às 22h
+  const dentroHorario = (hora > 15 || (hora === 8 && minuto >= 0)) && hora < 22;
+
+  const aberto = !fechadoHoje && dentroHorario;
+
+  if (aberto) {
+    aviso.className = "aviso-horario aviso-aberto";
+    aviso.innerHTML = "✅ Estamos ABERTOS! das 15h às 22h.";
+    ativarInputs(true);
+  } else {
+    aviso.className = "aviso-horario aviso-fechado";
+    aviso.innerHTML = "⛔ Estamos FECHADOS agora. Lembrete: Quinta é folga.";
+    ativarInputs(false);
+  }
+}
+
+function ativarInputs(ativo) {
+  document.querySelectorAll("button, input, select, textarea").forEach(el => {
+    el.disabled = !ativo;
+  });
+}
+
+// Garante que só roda depois que a página carregar
+window.addEventListener("DOMContentLoaded", () => {
+  verificarHorario();
+  setInterval(verificarHorario, 60000); // revalida a cada minuto
+});
+</script>
 
   <main class="container">
+     <div id="aviso-horario" class="aviso-horario"></div>
+    <!-- Botão copos personalizados -->
     <div class="toggle-wrap">
-      <button class="toggle-btn" id="toggleSizes">
-        <i class="fas fa-glass-whiskey"></i> Mostrar tamanho do copo
-      </button>
+      <button class="toggle-btn" id="toggleSizes"><i class="fa-solid fa-bowl-rice fa-bounce"></i> Copos personalizados</button>
     </div>
 
+    <!-- Copos personalizados -->
     <section class="card theme-purple" id="sizesCard" style="display:none;">
-      <h3>Tamanho do copo</h3>
-      <div class="sizes" id="sizeGroup">
+      <h3>Copos personalizados</h3>
+      <div class="sizes">
         <label class="size">
           <img src="açai.jpg" alt="Copo 300" /><br>
           300ml<br><span class="sub">2 frutas • 2 ingredientes • 1 cobertura</span>
-          <div class="price"><strong style="font-size: 20px;">R$ 10,00</strong></div>
-          <input type="radio" name="size" value="300" data-price="10">
+          <div class="price"><strong>R$ 15,00</strong></div>
+          <input type="radio" name="size" value="300" data-price="15" data-type="custom">
         </label>
         <label class="size">
           <img src="açai.jpg" alt="Copo 400" /><br>
           400ml<br><span class="sub">3 frutas • 3 ingredientes • 1 cobertura</span>
-          <div class="price"><strong style="font-size: 20px;">R$ 15,00</strong></div>
-          <input type="radio" name="size" value="400" data-price="15">
+          <div class="price"><strong>R$ 20,00</strong></div>
+          <input type="radio" name="size" value="400" data-price="20" data-type="custom">
         </label>
         <label class="size">
           <img src="açai.jpg" alt="Copo 500" /><br>
           500ml<br><span class="sub">4 frutas • 4 ingredientes • 1 cobertura</span>
-          <div class="price"><strong style="font-size: 20px;">R$ 20,00</strong></div>
-          <input type="radio" name="size" value="500" data-price="20">
+          <div class="price"><strong>R$ 22,00</strong></div>
+          <input type="radio" name="size" value="500" data-price="22" data-type="custom">
+        </label>
+        <label class="size">
+          <img src="açai.jpg" alt="Copo 750" /><br>
+          750ml<br><span class="sub">5 frutas • 5 ingredientes • 1 cobertura</span>
+          <div class="price"><strong>R$ 35,00</strong></div>
+          <input type="radio" name="size" value="750" data-price="35" data-type="custom">
+        </label>
+        <!-- Novo copo: Barca -->
+        <label class="size">
+          <img src="barca.jpeg" alt="Barca" /><br>
+          Barca<br><span class="sub">4 frutas • 8 ingredientes • 1 cobertura</span>
+          <div class="price"><strong>R$ 80,00</strong></div>
+          <input type="radio" name="size" value="barca" data-price="80" data-type="custom">
         </label>
       </div>
     </section>
 
-    <section class="card theme-pink" id="fruitsSection">
+    <!-- Botão copos tradicionais -->
+    <div class="toggle-wrap">
+      <button class="toggle-btn" id="toggleTraditionals"><i class="fa-solid fa-bowl-rice fa-bounce"></i> Copos tradicionais</button>
+    </div>
+
+    <!-- Copos tradicionais -->
+    <section class="card theme-orange" id="traditionalsCard" style="display:none;">
+      <h3>Copos tradicionais</h3>
+      <div class="sizes">
+        <label class="size">
+          <img src="açai.jpg" alt="250ml" /><br>
+          250ml<br><span class="sub">Tapioca + Leite condensado</span>
+          <div class="price"><strong>R$ 10,00</strong></div>
+          <input type="radio" name="size" value="250" data-price="10" data-type="traditional">
+        </label>
+        <label class="size">
+          <img src="açai.jpg" alt="300ml" /><br>
+          300ml<br><span class="sub">Tapioca + Leite condensado</span>
+          <div class="price"><strong>R$ 12,00</strong></div>
+          <input type="radio" name="size" value="300" data-price="12" data-type="traditional">
+        </label>
+        <label class="size">
+          <img src="açai.jpg" alt="400ml" /><br>
+          400ml<br><span class="sub">Tapioca + Leite condensado</span>
+          <div class="price"><strong>R$ 14,00</strong></div>
+          <input type="radio" name="size" value="400" data-price="14" data-type="traditional">
+        </label>
+        <label class="size">
+          <img src="açai.jpg" alt="500ml" /><br>
+          500ml<br><span class="sub">Tapioca + Leite condensado</span>
+          <div class="price"><strong>R$ 16,00</strong></div>
+          <input type="radio" name="size" value="500" data-price="16" data-type="traditional">
+        </label>
+      </div>
+    </section>
+
+    <!-- Frutas (sem imagens; oculto até abrir personalizados) -->
+    <section class="card theme-pink" id="fruitsSection" style="display:none;">
       <h3><i class="fas fa-apple-alt"></i> Frutas</h3>
       <div class="options" id="fruits"></div>
     </section>
 
-    <section class="card theme-vinho">
+    <!-- Ingredientes (sem imagens; oculto até abrir personalizados) -->
+    <section class="card theme-vinho" id="ingredientsSection" style="display:none;">
       <h3><i class="fas fa-seedling"></i> Ingredientes</h3>
       <div class="options" id="ingredients"></div>
     </section>
 
-    <section class="card theme-orange">
+    <!-- Adicionais (sem imagens) -->
+    <div class="toggle-wrap">
+      <button class="toggle-btn" id="toggleExtras"><i class="fas fa-plus"></i> Mostrar adicionais</button>
+    </div>
+    <section class="card theme-red" id="extrasCard" style="display:none;">
+      <h3><i class="fas fa-star"></i> Adicionais</h3>
+      <div class="options" id="extras"></div>
+      <div class="input" style="margin-top:8px;"><span class="label">Cada adicional custa R$ 4,00 (pode escolher mais de um).</span></div>
+    </section>
+
+    <!-- Bebidas -->
+    <div class="toggle-wrap">
+      <button class="toggle-btn" id="toggleDrinks"><i class="fas fa-wine-bottle"></i> Mostrar bebidas</button>
+    </div>
+    <section class="card theme-green" id="drinksCard" style="display:none;">
+      <h3><i class="fas fa-wine-glass"></i> Bebidas</h3>
+      <div class="options" id="drinks"></div>
+      <div class="input" style="margin-top:8px;"><span class="label">Selecione as bebidas desejadas.</span></div>
+    </section>
+
+    <!-- Coberturas (sem imagens) -->
+    <section class="card theme-orange" id="toppingsSection">
       <h3><i class="fas fa-ice-cream"></i> Cobertura</h3>
       <div class="options" id="toppings"></div>
-      <div class="input" style="margin-top:8px;">
-        <span class="label">Opcional — escolha se quiser.</span>
-      </div>
+      <div class="input" style="margin-top:8px;"><span class="label">Opcional — escolha se quiser.</span></div>
     </section>
 
+    <!-- Observações -->
     <section class="card theme-red">
       <h3><i class="fas fa-comment-dots"></i> Observações</h3>
-      <div class="input">
-        <textarea id="notes" rows="2" placeholder="Ex.: pouco xarope, sem granola, ponto do açaí… (opcional)"></textarea>
-      </div>
-      <div class="actions" style="margin-top:10px;">
-        <button class="btn ghost" id="reset">Limpar escolhas</button>
-      </div>
+      <div class="input"><textarea id="notes" rows="2" placeholder="Ex.: pouco xarope, sem granola, ponto do açaí… (opcional)"></textarea></div>
+      <div class="actions" style="margin-top:10px;"><button class="btn ghost" id="reset">Limpar escolhas</button></div>
     </section>
-    <!-- 🔥 Botão destacado fora do card -->
-<div class="add-to-cart-wrap">
-  <button class="btn add-to-cart-big" id="addToCart">
-    <i class="fas fa-cart-plus"></i> Adicionar ao Carrinho
-  </button>
-</div>
+
+    <!-- Botão adicionar -->
+    <div class="add-to-cart-wrap" id="addToCartWrap">
+      <button class="btn add-to-cart-big" id="addToCart"><i class="fas fa-cart-plus"></i> Adicionar ao Carrinho</button>
+    </div>
   </main>
-<style>
-  .add-to-cart-wrap {
-  text-align: center;
-  margin: 25px 0;
-}
 
-.add-to-cart-big {
-  background: linear-gradient(135deg, #029402, #47ad44);
-  color: #fff;
-  font-size: 22px;
-  font-weight: 800;
-  border: none;
-  border-radius: 50px;
-  cursor: pointer;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.25);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-  width: 100%; /* ocupa toda a largura */
-  max-width: 380px; /* limite para não ficar exagerado em telas grandes */
-  text-align: center;
-}
-
-.add-to-cart-big:hover {
-  transform: scale(1.05);
-  box-shadow: 0 14px 35px rgba(0,0,0,0.35);
-  background: linear-gradient(135deg, #47ad44, #029402);
-}
-
-</style>
   <!-- Carrinho lateral -->
   <aside class="cart-panel" id="cartPanel">
     <div class="cart-header">
       <strong>🛒 Seu carrinho</strong>
-      <button class="btn secondary" id="closeCart">Continuar</button>
+      <button class="btn secondary" id="closeCart">Continuar pedindo</button>
     </div>
-
-    <div class="cart-items" id="cartItems">
-      <div class="empty">Seu carrinho está vazio. Selecione o tamanho do copo para começar.</div>
-    </div>
+    <div class="cart-items" id="cartItems"><div class="empty">Seu carrinho está vazio. Selecione o tamanho do copo ou bebidas para começar.</div></div>
     <div class="total-bar" id="totalBar">Total: R$ 0,00</div>
 
     <div class="form">
@@ -500,174 +431,76 @@
           <option>Pix</option>
         </select>
       </div>
-      <div class="actions" style="justify-content:flex-end;">
-        <button class="btn whatsapp" id="sendWhatsapp">Enviar pedido no WhatsApp</button>
-      </div>
+      <div class="actions" style="justify-content:flex-end;"><button class="btn whatsapp" id="sendWhatsapp">Enviar pedido no WhatsApp</button></div>
       <div class="label" style="text-align:right;">Envio para: 55 99 9224-7544</div>
     </div>
   </aside>
 
-  <!-- Resumo fixo do pedido -->
-  <div class="cart-summary" id="cartSummary">
-  <div class="left">
-    <span><i class="fas fa-shopping-basket"></i> Itens: <span class="badge" id="summaryCount">0</span></span>
-    <span>Total: <span class="badge" id="summaryTotal">R$ 0,00</span></span>
-  </div>
-  <button id="summaryOpen">Ver carrinho</button>
-</div>
+  <button id="btnTop"><i class="fas fa-arrow-up"></i></button>
 
+  <footer>
+    <button id="btnFeedback"><i class="fas fa-comment-dots"></i> Feedback</button>
+  </footer>
 
-  <!-- Menu lateral com formulário -->
-  <aside id="sideMenu" class="side-menu" aria-label="Menu lateral">
+  <aside id="sideMenu" class="side-menu">
     <div class="side-header">
-      <h3><i class="fas fa-comment-dots"></i> Fale Conosco</h3>
-      <button id="closeMenu" aria-label="Fechar menu"><i class="fas fa-times"></i></button>
+      <h3>Feedback</h3>
+      <button id="closeMenu"><i class="fas fa-times"></i></button>
     </div>
     <form id="feedbackForm" class="side-form">
-      <textarea id="feedbackText" placeholder="Escreva sua sugestão, reclamação ou elogio..."></textarea>
-      <button type="submit" class="btn-send"><i class="fab fa-whatsapp"></i> Enviar no WhatsApp</button>
+      <textarea id="feedbackText" placeholder="Digite elogios, reclamações, sugestões..."></textarea>
+      <button type="submit"><i class="fab fa-whatsapp"></i> Enviar no WhatsApp</button>
     </form>
   </aside>
 
-<footer>
-  <div class="footer-container">
-    <div class="footer-brand">
-      <img src="açai2.jpeg" alt="Logo Açaiteria" class="footer-logo">
-      <div>
-        <h3>Açaiteria Itinga</h3>
-        <p>Feito com 💜 em Itinga do Maranhão, MA</p>
-      </div>
+  <div class="cart-summary" id="cartSummary">
+    <div class="left">
+      <span><i class="fas fa-shopping-basket"></i> Itens: <span class="badge" id="summaryCount">0</span></span>
+      <span>Total: <span class="badge" id="summaryTotal">R$ 0,00</span></span>
     </div>
-
-    <div class="footer-social">
-      <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-      <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
-      <a href="#" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
-    </div>
+     <button id="summaryOpen" class="btn ghost"><i class="fas fa-shopping-cart"></i> Carrinho</button>
   </div>
-
-  <div class="footer-bottom">
-    © 2025 Açaiteria Itinga — Todos os direitos reservados
-  </div>
-</footer>
-<style>
-  footer {
-  background: linear-gradient(90deg, var(--primary-dark), var(--primary));
-  color: #fff;
-  padding: 30px 20px 15px;
-  margin-top: 40px;
-  box-shadow: 0 -4px 12px rgba(0,0,0,0.15);
-}
-
-.footer-container {
-  max-width: 1024px;
-  margin: 0 auto;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: center;
-  gap: 20px;
-}
-
-.footer-brand {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.footer-logo {
-  width: 60px;
-  height: 60px;
-  border-radius: 12px;
-  object-fit: cover;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-}
-
-.footer-brand h3 {
-  margin: 0;
-  font-size: 20px;
-  font-weight: 800;
-}
-
-.footer-brand p {
-  margin: 2px 0 0;
-  font-size: 14px;
-  color: #ffe58a;
-}
-
-.footer-social {
-  display: flex;
-  gap: 16px;
-}
-
-.footer-social a {
-  color: #fff;
-  font-size: 22px;
-  transition: transform 0.2s, color 0.2s;
-}
-
-.footer-social a:hover {
-  color: #ffe58a;
-  transform: scale(1.2);
-}
-
-.footer-bottom {
-  text-align: center;
-  margin-top: 20px;
-  font-size: 14px;
-  border-top: 1px solid rgba(255,255,255,0.2);
-  padding-top: 10px;
-  color: #ddd;
-}
-.big-toast {
-  position: fixed;
-  top: 20%;
-  left: 50%;
-  transform: translate(-50%, -50%) scale(0.8);
-  background: rgba(0,0,0,0.8);
-  color: #fff;
-  font-size: 30px;
-  font-weight: 900;
-  padding: 25px;
-  border-radius: 20px;
-  text-align: center;
-  z-index: 3000;
-  opacity: 0;
-  transition: all 0.4s ease;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-}
-.big-toast.show {
-  opacity: 1;
-  transform: translate(-50%, -50%) scale(1);
-}
-
-</style>
 
   <script>
     // Dados
-    const FRUITS = ["Banana", "Morango", "Manga", "Kiwi", "Uva", "Abacaxi"];
-    const INGREDIENTS = ["Granola", "Leite em pó", "Paçoca", "Amendoim", "Jujuba", "Castanha"];
-    const TOPPINGS = ["Chocolate", "Caramelo", "Leite condensado", "Morango"];
+    const FRUITS = ["Banana","Morango","Manga","Kiwi","Uva","Abacaxi","Pera","Melão","Mamão","Pitaia"];
+    const INGREDIENTS = ["Granola","Leite em pó","Paçoca","Amendoim","Jujuba","Castanha","Cereal","Tapioca","Look","Chocoball","Confete","Cookies","Disquete de chocolatee","Pé de moleque","Sucrilhos","Farinha lactea","Bis","Aveia","Flocos","Mel","Gostas de chocolate"];
+    const TOPPINGS = ["Chocolate","Morango","Leite condensado"];
+    const EXTRAS = ["Nutela","Cupuaçú","Doce de leite","Maracujá","Creme de ninho","Creme de ovomaltine","Creme de paçoca","Creme de morango"]; // R$4 cada
+    const DRINKS = [
+      { label: "Água 500ml", price: 3 },
+      { label: "Água c/ gás", price: 4 },
+      { label: "Água 1,5L", price: 7 },
+      { label: "Coca-cola Lata", price: 4 },
+      { label: "Fanta Lata", price: 4 }
+    ];
 
     const EMOJI = {
-      Banana: "🍌", Morango: "🍓", Manga: "🥭", Kiwi: "🥝", Uva: "🍇", Abacaxi: "🍍",
-      Granola: "🥣", "Leite em pó": "🥛", Paçoca: "🥜", Amendoim: "🥜", Jujuba: "🍬", Castanha: "🌰"
+      Banana:"🍌", Morango:"🍓", Manga:"🥭", Kiwi:"🥝", Uva:"🍇", Abacaxi:"🍍",
+      Pera:"🍐", "Melão":"🍈", "Mamão":"🍈", Pitaia:"🐉",
+      Granola:"🥣", "Leite em pó":"🥛", Paçoca:"🥜", Amendoim:"🥜", Jujuba:"🍬", Castanha:"🌰",
+      Cereal:"🥣", Tapioca:"🌾", Look:"🍫", Chocoball:"🍫", Confete:"🍭", Cookies:"🍪",
+      "Disquete de chocolatee":"🍫", "Pé de moleque":"🥜", Sucrilhos:"🥣", "Farinha lactea":"🥛",
+      Bis:"🍫", Aveia:"🌾", Flocos:"❄️", Mel:"🍯", "Gostas de chocolate":"🍫",
+      Chocolate:"🍫", Caramelo:"🍯", "Leite condensado":"🥛"
     };
 
-    // PIX Config
     const PIX_KEY = '+5599992247544';
     const PIX_NAME = 'Carlos de Freitas Rocha';
-    const PIX_BANK = 'Banco do Brasil';
     const PIX_CITY = 'IMPERATRIZ';
 
+    const formatBRL = n => n.toLocaleString('pt-BR', { style:'currency', currency:'BRL' });
+
     // Elementos
-    const sizeRadios = document.querySelectorAll('input[name="size"]');
     const fruitsWrap = document.getElementById('fruits');
     const ingredientsWrap = document.getElementById('ingredients');
     const toppingsWrap = document.getElementById('toppings');
+    const extrasWrap = document.getElementById('extras');
+    const drinksWrap = document.getElementById('drinks');
 
-    const resetBtn = document.getElementById('reset');
     const addToCartBtn = document.getElementById('addToCart');
+    const addToCartWrap = document.getElementById('addToCartWrap');
+    const resetBtn = document.getElementById('reset');
 
     const cartPanel = document.getElementById('cartPanel');
     const closeCartBtn = document.getElementById('closeCart');
@@ -681,51 +514,143 @@
     const paymentInput = document.getElementById('payment');
     const sendWhatsappBtn = document.getElementById('sendWhatsapp');
 
-    const fruitsSection = document.getElementById('fruitsSection');
-
-    // Resumo fixo
+    const summaryOpenTop = document.getElementById('summaryOpen');
     const summaryCount = document.getElementById('summaryCount');
     const summaryTotal = document.getElementById('summaryTotal');
-    const summaryOpenBtn = document.getElementById('summaryOpen');
 
-    // Toggle mostrar/ocultar copos
     const toggleSizesBtn = document.getElementById('toggleSizes');
     const sizesCard = document.getElementById('sizesCard');
-    toggleSizesBtn.addEventListener('click', () => {
-      const visible = sizesCard.style.display !== 'none';
-      sizesCard.style.display = visible ? 'none' : 'block';
-      toggleSizesBtn.innerHTML = visible
-        ? '<i class="fas fa-glass-whiskey"></i> Mostrar tamanho do copo'
-        : '<i class="fas fa-eye-slash"></i> Ocultar tamanho do copo';
+    const toggleTraditionalsBtn = document.getElementById('toggleTraditionals');
+    const traditionalsCard = document.getElementById('traditionalsCard');
+
+    const fruitsSection = document.getElementById('fruitsSection');
+    const ingredientsSection = document.getElementById('ingredientsSection');
+
+    const toggleExtrasBtn = document.getElementById('toggleExtras');
+    const extrasCard = document.getElementById('extrasCard');
+
+    const toggleDrinksBtn = document.getElementById('toggleDrinks');
+    const drinksCard = document.getElementById('drinksCard');
+
+    // Botão subir ao topo
+    document.getElementById("btnTop").addEventListener("click", () => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
     });
+
+    // Menu lateral feedback
+    const sideMenu = document.getElementById("sideMenu");
+    document.getElementById("btnFeedback").addEventListener("click", () => sideMenu.classList.add("open"));
+    document.getElementById("closeMenu").addEventListener("click", () => sideMenu.classList.remove("open"));
+    document.getElementById("feedbackForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const text = document.getElementById("feedbackText").value.trim();
+      if (!text) return alert("Digite sua mensagem.");
+      const url = `https://wa.me/5599992247544?text=${encodeURIComponent("Feedback: " + text)}`;
+      window.open(url, "_blank");
+      sideMenu.classList.remove("open");
+      document.getElementById("feedbackText").value = "";
+    });
+
+    // Exclusividade dos cards de copos
+    function openSizesCard() {
+      sizesCard.style.display = "block";
+      toggleSizesBtn.innerHTML = '<i class="fa-solid fa-bowl-rice fa-bounce"></i></i> Ocultar copos personalizados';
+      traditionalsCard.style.display = "none";
+      toggleTraditionalsBtn.innerHTML = '<i class="fa-solid fa-bowl-rice fa-bounce"></i></i> Copos tradicionais';
+      fruitsSection.style.display = "block";
+      ingredientsSection.style.display = "block";
+    }
+    function closeSizesCard() {
+      sizesCard.style.display = "none";
+      toggleSizesBtn.innerHTML = '<i class="fa-solid fa-bowl-rice fa-bounce"></i></i> Copos personalizados';
+      fruitsSection.style.display = "none";
+      ingredientsSection.style.display = "none";
+      document.querySelectorAll('input[name="fruits"], input[name="ingredients"]').forEach(i => { i.checked=false; i.disabled=false; i.closest('.option')?.classList.remove('disabled'); });
+    }
+    function openTraditionalsCard() {
+      traditionalsCard.style.display = "block";
+      toggleTraditionalsBtn.innerHTML = '<i class="fa-solid fa-bowl-rice fa-bounce"></i></i> Ocultar copos tradicionais';
+      sizesCard.style.display = "none";
+      toggleSizesBtn.innerHTML = '<i class="fa-solid fa-bowl-rice fa-bounce"></i></i> Copos personalizados';
+      fruitsSection.style.display = "none";
+      ingredientsSection.style.display = "none";
+      document.querySelectorAll('input[name="fruits"], input[name="ingredients"]').forEach(i => { i.checked=false; i.disabled=false; i.closest('.option')?.classList.remove('disabled'); });
+    }
+    function closeTraditionalsCard() {
+      traditionalsCard.style.display = "none";
+      toggleTraditionalsBtn.innerHTML = '<i class="fa-solid fa-bowl-rice fa-bounce"></i></i> Copos tradicionais';
+    }
+
+    toggleSizesBtn.addEventListener("click", () => {
+      const isOpen = sizesCard.style.display !== "none";
+      if (isOpen) closeSizesCard(); else openSizesCard();
+    });
+    toggleTraditionalsBtn.addEventListener("click", () => {
+      const isOpen = traditionalsCard.style.display !== "none";
+      if (isOpen) closeTraditionalsCard(); else openTraditionalsCard();
+    });
+
+    // Mostrar/Ocultar adicionais
+    toggleExtrasBtn.addEventListener('click', () => {
+      const visible = extrasCard.style.display !== 'none';
+      extrasCard.style.display = visible ? 'none' : 'block';
+      toggleExtrasBtn.innerHTML = visible
+        ? '<i class="fas fa-plus"></i> Mostrar adicionais'
+        : '<i class="fas fa-eye-slash"></i> Ocultar adicionais';
+    });
+
+    // Mostrar/Ocultar bebidas
+    toggleDrinksBtn.addEventListener('click', () => {
+      const visible = drinksCard.style.display !== 'none';
+      drinksCard.style.display = visible ? 'none' : 'block';
+      toggleDrinksBtn.innerHTML = visible
+        ? '<i class="fas fa-wine-bottle"></i> Mostrar bebidas'
+        : '<i class="fas fa-eye-slash"></i> Ocultar bebidas';
+    });
+
+    // Render opções SEM imagens (frutas, ingredientes, extras, cobertura)
+    function createTextOption(labelText, name, type="checkbox") {
+      const d = document.createElement('label');
+      d.className = 'option';
+      d.innerHTML = `<input type="${type}" name="${name}" value="${labelText}">${labelText}`;
+      return d;
+    }
+    FRUITS.forEach(f => fruitsWrap.appendChild(createTextOption(f,'fruits')));
+    INGREDIENTS.forEach(i => ingredientsWrap.appendChild(createTextOption(i,'ingredients')));
+    TOPPINGS.forEach(t => toppingsWrap.appendChild(createTextOption(t,'toppings','radio')));
+    EXTRAS.forEach(e => extrasWrap.appendChild(createTextOption(e,'extras')));
+
+    // Render bebidas (checkbox com preço)
+    function createDrinkOption(drink) {
+      const d = document.createElement('label');
+      d.className = 'option';
+      d.innerHTML = `
+        <input type="checkbox" name="drinks" value="${drink.label}" data-price="${drink.price}">
+        <span>${drink.label} = <strong>${formatBRL(drink.price)}</strong></span>
+      `;
+      return d;
+    }
+    DRINKS.forEach(d => drinksWrap.appendChild(createDrinkOption(d)));
 
     // Estado
     let limits = { fruits: 0, ingredients: 0 };
-    let cart = []; // agora com múltiplos itens
-    let currentItem = { id: 1, size: null, price: 0, fruits: [], ingredients: [], topping: '', notes: '' };
+    let cart = [];
 
-    // Render options
-    function createOption(labelText, name, type = "checkbox") {
-      const d = document.createElement('label');
-      d.className = 'option';
-      d.innerHTML = `<input type="${type}" name="${name}" value="${labelText}"> ${labelText}`;
-      return d;
-    }
-    FRUITS.forEach(f => fruitsWrap.appendChild(createOption(f, 'fruits')));
-    INGREDIENTS.forEach(i => ingredientsWrap.appendChild(createOption(i, 'ingredients')));
-    TOPPINGS.forEach(t => toppingsWrap.appendChild(createOption(t, 'toppings', 'radio')));
-
-    // Reset radios ao abrir
-    sizeRadios.forEach(r => r.checked = false);
-    toppingsWrap.querySelectorAll('input[name="toppings"]').forEach(t => t.checked = false);
-
-    // Limites por tamanho
+    // Limites por tamanho (apenas custom)
     function updateLimitsFromSize() {
-      const selected = document.querySelector('input[name="size"]:checked')?.value;
-      if (selected === '300') limits = { fruits: 2, ingredients: 2 };
-      else if (selected === '400') limits = { fruits: 3, ingredients: 3 };
-      else if (selected === '500') limits = { fruits: 4, ingredients: 4 };
-      else limits = { fruits: 0, ingredients: 0 };
+      const selected = document.querySelector('input[name="size"]:checked');
+      const type = selected?.dataset?.type;
+      const val = selected?.value;
+      if (type !== 'custom') {
+        limits = { fruits: 0, ingredients: 0 };
+      } else {
+        if (val === '300') limits = { fruits: 2, ingredients: 2 };
+        else if (val === '400') limits = { fruits: 3, ingredients: 3 };
+        else if (val === '500') limits = { fruits: 4, ingredients: 4 };
+        else if (val === '750') limits = { fruits: 5, ingredients: 5 };
+        else if (val === 'barca') limits = { fruits: 4, ingredients: 8 };
+        else limits = { fruits: 0, ingredients: 0 };
+      }
       enforceLimits('fruits', limits.fruits);
       enforceLimits('ingredients', limits.ingredients);
     }
@@ -735,161 +660,217 @@
       const selectedCount = Array.from(inputs).filter(i => i.checked).length;
       inputs.forEach(i => {
         if (max === 0) {
-          i.closest('.option')?.classList.add('disabled');
           i.checked = false;
+          i.disabled = true;
+          i.closest('.option')?.classList.add('disabled');
         } else {
+          i.disabled = false;
           if (!i.checked) i.closest('.option')?.classList.toggle('disabled', selectedCount >= max);
           else i.closest('.option')?.classList.remove('disabled');
         }
       });
     }
 
-    // Toast
-   function showToast(text, emoji = '') {
-  const toast = document.createElement('div');
-  toast.className = 'big-toast';
-  toast.innerHTML = `${emoji ? '<span style="font-size:60px;">' + emoji + '</span><br>' : ''}${text} adicionado!`;
-
-  document.body.appendChild(toast);
-
-  // animação de entrada
-  setTimeout(() => toast.classList.add('show'), 50);
-
-  // remove depois de 2s
-  setTimeout(() => {
-    toast.classList.remove('show');
-    setTimeout(() => toast.remove(), 200);
-  }, 1000);
-}
-
-    // Atualiza o item atual (não mexe no carrinho)
-    function updateCurrentItem() {
-      const sizeInput = document.querySelector('input[name="size"]:checked');
-      currentItem.size = sizeInput?.value || null;
-      currentItem.price = Number(sizeInput?.dataset?.price || 0);
-      currentItem.fruits = Array.from(document.querySelectorAll('input[name="fruits"]:checked')).map(i => i.value);
-      currentItem.ingredients = Array.from(document.querySelectorAll('input[name="ingredients"]:checked')).map(i => i.value);
-      currentItem.topping = document.querySelector('input[name="toppings"]:checked')?.value || '';
-      currentItem.notes = document.getElementById('notes').value.trim();
-      // não atualiza cart aqui; só no addToCart()
+    function showToast(text, emoji='') {
+      const toast = document.createElement('div');
+      toast.className = 'big-toast';
+      toast.innerHTML = `${emoji ? '<div style="font-size:52px; line-height:1; margin-bottom:8px;">'+emoji+'</div>' : ''}<div style="font-size:18px;font-weight:800;">${text}</div>`;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.classList.add('show'), 50);
+      setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 200); }, 1400);
     }
 
-   // Eventos para atualizar item atual
-document.querySelectorAll('input[name="size"], input[name="fruits"], input[name="ingredients"], input[name="toppings"]').forEach(inp => {
-  inp.addEventListener('change', () => {
-    if (inp.name === 'fruits' || inp.name === 'ingredients') {
-      const max = inp.name === 'fruits' ? limits.fruits : limits.ingredients;
-      const inputs = document.querySelectorAll(`input[name="${inp.name}"]`);
-      const count = Array.from(inputs).filter(i => i.checked).length;
+    document.addEventListener('change', (e) => {
+      const inp = e.target;
+      if (!inp.name) return;
 
-      if (count > max) {
-        inp.checked = false;
-      } else if (inp.checked) {
-        const emoji = EMOJI[inp.value] || '';
-        showToast(inp.value, emoji);
+      if (inp.name === 'fruits' || inp.name === 'ingredients') {
+        const max = inp.name === 'fruits' ? limits.fruits : limits.ingredients;
+        const inputs = document.querySelectorAll(`input[name="${inp.name}"]`);
+        const count = Array.from(inputs).filter(i => i.checked).length;
 
-        // 🔥 Quando atingir o limite, rola para a próxima seção
-        if (count === max) {
-          if (inp.name === 'fruits') {
-            document.getElementById('ingredients').scrollIntoView({ behavior: 'smooth', block: 'center' });
-          }
-          if (inp.name === 'ingredients') {
-            document.getElementById('toppings').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        if (max === 0) {
+          inp.checked = false;
+          return;
+        }
+
+        if (count > max) {
+          inp.checked = false;
+        } else if (inp.checked) {
+          const emoji = EMOJI[inp.value] || '';
+          showToast(inp.value, emoji);
+          if (count === max) {
+            if (inp.name === 'fruits') ingredientsWrap.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            if (inp.name === 'ingredients') addToCartWrap.scrollIntoView({ behavior: 'smooth', block: 'center' });
           }
         }
+        enforceLimits(inp.name, max);
       }
-      enforceLimits(inp.name, max);
-    }
 
-    if (inp.name === 'size') {
-      // sempre que escolher copo, limpa seleções anteriores
-      document.querySelectorAll('input[name="fruits"]').forEach(i => i.checked = false);
-      document.querySelectorAll('input[name="ingredients"]').forEach(i => i.checked = false);
-      document.querySelectorAll('input[name="toppings"]').forEach(t => t.checked = false);
+      if (inp.name === 'size') {
+        const type = inp.dataset.type;
+        const disableChoices = (type !== 'custom');
+        // Não ocultamos cards aqui; exclusividade é pelos botões
+        document.querySelectorAll('input[name="fruits"]').forEach(i => { i.checked = false; i.disabled = disableChoices; i.closest('.option')?.classList.toggle('disabled', disableChoices); });
+        document.querySelectorAll('input[name="ingredients"]').forEach(i => { i.checked = false; i.disabled = disableChoices; i.closest('.option')?.classList.toggle('disabled', disableChoices); });
+        document.querySelectorAll('input[name="toppings"]').forEach(t => { t.checked = false; t.disabled = false; t.closest('.option')?.classList.remove('disabled'); });
+        document.querySelectorAll('input[name="extras"]').forEach(t => { t.checked = false; t.disabled = false; t.closest('.option')?.classList.remove('disabled'); });
+        document.querySelectorAll('input[name="drinks"]').forEach(d => { d.checked = false; d.disabled = false; d.closest('.option')?.classList.remove('disabled'); });
 
-      updateLimitsFromSize();
+        updateLimitsFromSize();
 
-      // 🔥 Vai direto para frutas
-      document.getElementById('fruitsSection').scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
+        if (type === 'traditional') {
+          addToCartWrap.scrollIntoView({ behavior:'smooth', block:'center' });
+          fruitsSection.style.display = "none";
+          ingredientsSection.style.display = "none";
+        } else {
+          if (sizesCard.style.display !== "none") {
+            fruitsSection.style.display = "block";
+            ingredientsSection.style.display = "block";
+          }
+          fruitsSection.scrollIntoView({ behavior:'smooth', block:'center' });
+        }
+      }
 
-    updateCurrentItem();
-  });
-});
+      if (inp.id === 'neighborhood') {
+        updateTotalsUI();
+      }
+    });
 
-
-    // Adicionar ao carrinho
     function addToCart() {
-      if (!currentItem.size) {
-        Swal.fire({ icon: 'info', title: 'Escolha o tamanho', text: 'Selecione o tamanho do copo antes de adicionar.' });
+      const selected = document.querySelector('input[name="size"]:checked');
+
+      const extrasSelected = Array.from(document.querySelectorAll('input[name="extras"]:checked')).map(e => e.value);
+      const extrasCost = extrasSelected.length * 4;
+
+      const drinksSelected = Array.from(document.querySelectorAll('input[name="drinks"]:checked'))
+        .map(d => ({ label: d.value, price: parseFloat(d.dataset.price) }));
+      const drinksCost = drinksSelected.reduce((s,d) => s + d.price, 0);
+
+      if (!selected) {
+        if (drinksSelected.length === 0) {
+          Swal.fire({ icon:'info', title:'Selecione algo', text:'Escolha um copo ou ao menos uma bebida.' });
+          return;
+        }
+        const item = {
+          id: Date.now(),
+          tipo: 'Bebidas',
+          size: '',
+          basePrice: 0,
+          price: drinksCost,
+          fruits: [],
+          ingredients: [],
+          topping: '',
+          extras: [],
+          drinks: drinksSelected,
+          notes: document.getElementById('notes').value.trim()
+        };
+        cart.push(item);
+        renderCart();
+        resetSelections(false);
+        openCart();
         return;
       }
-      const newItem = { ...currentItem, id: Date.now() };
-      cart.push(newItem);
+
+      let item;
+      if (selected.dataset.type === "custom") {
+        item = {
+          id: Date.now(),
+          tipo: 'Personalizado',
+          size: selected.value,
+          basePrice: parseFloat(selected.dataset.price),
+          price: parseFloat(selected.dataset.price) + extrasCost + drinksCost,
+          fruits: Array.from(document.querySelectorAll('input[name="fruits"]:checked')).map(f => f.value),
+          ingredients: Array.from(document.querySelectorAll('input[name="ingredients"]:checked')).map(i => i.value),
+          topping: document.querySelector('input[name="toppings"]:checked')?.value || '',
+          extras: extrasSelected,
+          drinks: drinksSelected,
+          notes: document.getElementById('notes').value.trim()
+        };
+      } else {
+        item = {
+          id: Date.now(),
+          tipo: 'Tradicional',
+          size: selected.value,
+          basePrice: parseFloat(selected.dataset.price),
+          price: parseFloat(selected.dataset.price) + extrasCost + drinksCost,
+          fruits: [],
+          ingredients: ["Tapioca","Leite condensado"],
+          topping: '',
+          extras: extrasSelected,
+          drinks: drinksSelected,
+          notes: document.getElementById('notes').value.trim()
+        };
+      }
+
+      cart.push(item);
       renderCart();
-      // Limpa seleções para montar outro copo
-      resetSelections(false); // false = não limpa carrinho
-      openCart(); // mostra o carrinho
+      resetSelections(false);
+      openCart();
     }
     addToCartBtn.addEventListener('click', addToCart);
 
-    // Abrir/fechar carrinho
     function openCart() { cartPanel.classList.add('open'); }
     function closeCart() { cartPanel.classList.remove('open'); }
+    summaryOpenTop.addEventListener('click', openCart);
     closeCartBtn.addEventListener('click', closeCart);
-    summaryOpenBtn.addEventListener('click', openCart);
 
-    // Reset de escolhas
-    function resetSelections(clearCart = true) {
+    function resetSelections(clearCart=true) {
       document.querySelectorAll('input[name="size"]').forEach(r => r.checked = false);
-      document.querySelectorAll('input[name="fruits"]').forEach(i => i.checked = false);
-      document.querySelectorAll('input[name="ingredients"]').forEach(i => i.checked = false);
-      document.querySelectorAll('input[name="toppings"]').forEach(t => t.checked = false);
+      document.querySelectorAll('input[name="fruits"]').forEach(i => { i.checked=false; i.disabled=false; i.closest('.option')?.classList.remove('disabled'); });
+      document.querySelectorAll('input[name="ingredients"]').forEach(i => { i.checked=false; i.disabled=false; i.closest('.option')?.classList.remove('disabled'); });
+      document.querySelectorAll('input[name="toppings"]').forEach(t => { t.checked=false; t.disabled=false; t.closest('.option')?.classList.remove('disabled'); });
+      document.querySelectorAll('input[name="extras"]').forEach(t => { t.checked=false; t.disabled=false; t.closest('.option')?.classList.remove('disabled'); });
+      document.querySelectorAll('input[name="drinks"]').forEach(d => { d.checked=false; d.disabled=false; d.closest('.option')?.classList.remove('disabled'); });
       document.getElementById('notes').value = '';
       limits = { fruits: 0, ingredients: 0 };
-      enforceLimits('fruits', 0);
-      enforceLimits('ingredients', 0);
-      currentItem = { id: 1, size: null, price: 0, fruits: [], ingredients: [], topping: '', notes: '' };
       if (clearCart) cart = [];
-      updateCurrentItem();
       renderCart();
+      updateTotalsUI();
     }
     resetBtn.addEventListener('click', () => resetSelections(true));
 
-    function formatBRL(n) { return n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) }
-
-    // Renderização do carrinho
     function renderCart() {
       cartItems.innerHTML = '';
       if (cart.length === 0) {
-        cartItems.innerHTML = '<div class="empty">Seu carrinho está vazio. Selecione o tamanho do copo para começar.</div>';
-        updateTotalsUI(); return;
+        cartItems.innerHTML = '<div class="empty">Seu carrinho está vazio. Selecione o tamanho do copo ou bebidas para começar.</div>';
+        updateTotalsUI();
+        return;
       }
-      cart.forEach((item, index) => {
+
+      cart.forEach((item,index) => {
         const div = document.createElement('div');
         div.className = 'cart-item';
         div.innerHTML = `
           <div class="top" style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
-            <div class="cart-title">Copo ${item.size}ml</div>
+            <div class="cart-title">${item.tipo}${item.size ? ' • Copo '+item.size+'ml' : ''}</div>
             <div style="display:flex;align-items:center;gap:8px;">
               <div class="cart-price">${formatBRL(item.price)}</div>
-              <button class="btn ghost btn-remove" data-index="${index}" title="Remover">Remover</button>
+              <button class="btn ghost btn-remove" data-index="${index}">Remover</button>
             </div>
           </div>
-          <div class="list-row"><strong>Frutas:</strong> ${item.fruits.join(', ') || '-'}</div>
-          <div class="list-row"><strong>Ingredientes:</strong> ${item.ingredients.join(', ') || '-'}</div>
-          <div class="list-row"><strong>Cobertura:</strong> ${item.topping || '-'}</div>
+          ${item.tipo === 'Personalizado' ? `
+            <div class="list-row"><strong>Frutas:</strong> ${item.fruits.map(f => (EMOJI[f]||'')+' '+f).join(', ') || '-'}</div>
+            <div class="list-row"><strong>Ingredientes:</strong> ${item.ingredients.map(i => (EMOJI[i]||'')+' '+i).join(', ') || '-'}</div>
+            <div class="list-row"><strong>Cobertura:</strong> ${item.topping || '-'}</div>
+          ` : item.tipo === 'Tradicional' ? `
+            <div class="list-row"><strong>Ingredientes fixos:</strong> ${(EMOJI['Tapioca']||'')} Tapioca, ${(EMOJI['Leite condensado']||'')} Leite condensado</div>
+          ` : ''}
+          ${item.extras && item.extras.length ? `<div class="list-row"><strong>Adicionais:</strong> ${item.extras.join(', ')}</div>` : ''}
+          ${item.drinks && item.drinks.length ? `<div class="list-row"><strong>Bebidas:</strong> ${item.drinks.map(d => `${d.label} (${formatBRL(d.price)})`).join(', ')}</div>` : ''}
           ${item.notes ? `<div class="list-row"><strong>Obs.:</strong> ${item.notes}</div>` : ''}
         `;
         cartItems.appendChild(div);
       });
 
-      // Eventos de remover
-      document.querySelectorAll('.btn-remove').forEach(btn => {
-        btn.addEventListener('click', e => {
+      cartItems.querySelectorAll('.btn-remove').forEach(btn => {
+        btn.addEventListener('click', async e => {
           const idx = Number(e.currentTarget.dataset.index);
-          cart.splice(idx, 1);
-          renderCart();
+          const confirm = await Swal.fire({ title:'Remover item?', showCancelButton:true, confirmButtonText:'Sim' });
+          if (confirm.isConfirmed) {
+            cart.splice(idx,1);
+            renderCart();
+          }
         });
       });
 
@@ -897,8 +878,11 @@ document.querySelectorAll('input[name="size"], input[name="fruits"], input[name=
     }
 
     function cartTotals() {
-      const total = cart.reduce((s, i) => s + i.price, 0);
+      let total = cart.reduce((s,i) => s + i.price, 0);
       const count = cart.length;
+      if (neighborhoodInput.value === "Itinga-PA" && total > 0) {
+        total += 3;
+      }
       return { total, count };
     }
 
@@ -910,23 +894,18 @@ document.querySelectorAll('input[name="size"], input[name="fruits"], input[name=
       summaryTotal.textContent = formatBRL(total);
     }
 
-    // Máscara telefone
     phoneInput.addEventListener('input', () => {
-      let v = phoneInput.value.replace(/\D/g, '');
+      let v = phoneInput.value.replace(/\D/g,'');
       v = v.replace(/^(\d{2})(\d)/, '($1) $2').replace(/(\d{5})(\d)/, '$1-$2');
-      phoneInput.value = v.slice(0, 15);
+      phoneInput.value = v.slice(0,15);
     });
 
-    // Pagamento (PIX e Dinheiro)
     paymentInput.addEventListener('change', async () => {
-      const total = cart.reduce((sum, i) => sum + i.price, 0);
+      const total = cartTotals().total;
       const val = paymentInput.value;
 
       if (val === 'Pix') {
-        if (total <= 0) {
-          await Swal.fire({ icon: 'info', title: 'Carrinho vazio', text: 'Adicione itens para gerar o Pix.' });
-          paymentInput.value = ''; return;
-        }
+        if (total <= 0) { await Swal.fire({ icon:'info', title:'Carrinho vazio', text:'Adicione itens para gerar o Pix.' }); paymentInput.value=''; return; }
         const code = buildPixBRCode({ key: PIX_KEY, name: PIX_NAME, city: PIX_CITY, amount: total, txid: 'ACAI' });
         const canvas = document.createElement('canvas');
         await QRCode.toCanvas(canvas, code, { width: 220 });
@@ -947,21 +926,17 @@ document.querySelectorAll('input[name="size"], input[name="fruits"], input[name=
           width: 520,
           showConfirmButton: false,
           didOpen: () => {
-            const btn = document.getElementById('copyPixBtn');
-            btn?.addEventListener('click', async () => {
+            document.getElementById('copyPixBtn')?.addEventListener('click', async () => {
               const ta = document.getElementById('pixCodeTA');
               await navigator.clipboard.writeText(ta.value);
-              Swal.fire({ toast: true, position: 'top', icon: 'success', title: 'Código Pix copiado', showConfirmButton: false, timer: 1800 });
+              Swal.fire({ toast:true, position:'top', icon:'success', title:'Código Pix copiado', showConfirmButton:false, timer:1800 });
             });
           }
         });
       }
 
       if (val === 'Dinheiro') {
-        if (total <= 0) {
-          await Swal.fire({ icon: 'info', title: 'Carrinho vazio', text: 'Adicione itens para calcular o troco.' });
-          paymentInput.value = ''; return;
-        }
+        if (total <= 0) { await Swal.fire({ icon:'info', title:'Carrinho vazio', text:'Adicione itens para calcular o troco.' }); paymentInput.value=''; return; }
         const { value: cash } = await Swal.fire({
           title: 'Valor em dinheiro',
           input: 'number',
@@ -973,41 +948,59 @@ document.querySelectorAll('input[name="size"], input[name="fruits"], input[name=
         if (cash !== undefined && cash !== null && cash !== '') {
           const value = parseFloat(cash);
           if (isNaN(value) || value < total) {
-            await Swal.fire({ icon: 'warning', title: 'Valor insuficiente', text: 'O valor entregue é menor que o total.' });
-            paymentInput.value = ''; return;
+            await Swal.fire({ icon:'warning', title:'Valor insuficiente', text:'O valor entregue é menor que o total.' });
+            paymentInput.value=''; return;
           }
           const troco = value - total;
           const notesEl = document.getElementById('notes');
           const prefix = notesEl.value.trim() ? notesEl.value.trim() + ' | ' : '';
           notesEl.value = `${prefix}Troco para: ${formatBRL(value)} (troco: ${formatBRL(troco)})`;
-          await Swal.fire({ icon: 'success', title: 'Troco calculado', text: `Troco: ${formatBRL(troco)}. Observação atualizada.` });
-          updateCurrentItem(); // reflete observações no item atual
+          await Swal.fire({ icon:'success', title:'Troco calculado', text:`Troco: ${formatBRL(troco)}. Observação atualizada.` });
         } else {
           paymentInput.value = '';
         }
       }
     });
 
-    // WhatsApp + Firestore
-    sendWhatsappBtn.addEventListener('click', () => {
-      if (cart.length === 0) return alert('Adicione pelo menos um açaí ao carrinho.');
+    sendWhatsappBtn.addEventListener('click', async () => {
+      if (cart.length === 0) return alert('Adicione ao menos um item (copo ou bebidas) ao carrinho.');
       if (!nameInput.value.trim()) return alert('Informe seu nome.');
       if (!phoneInput.value.trim()) return alert('Informe seu telefone.');
       if (!addressInput.value.trim()) return alert('Informe seu endereço.');
       if (!neighborhoodInput.value) return alert('Informe seu bairro.');
       if (!paymentInput.value) return alert('Selecione a forma de pagamento.');
 
-      const total = cart.reduce((sum, i) => sum + i.price, 0);
+      const totals = cartTotals();
+      const total = totals.total;
+      const itensTrad = cart.filter(i => i.tipo === 'Tradicional');
+      const itensPers = cart.filter(i => i.tipo === 'Personalizado');
+      const itensDrinks = cart.filter(i => i.tipo === 'Bebidas');
 
-      const itemsText = cart.map((item, idx) => [
+      const formatItem = (item, idx) => [
         `#${idx + 1}`,
-        `• Copo: ${item.size}ml`,
+        item.size ? `• Copo: ${item.size}ml` : null,
         `• Preço: ${formatBRL(item.price)}`,
-        `• Frutas: ${item.fruits.join(', ') || '-'}`,
-        `• Ingredientes: ${item.ingredients.join(', ') || '-'}`,
-        `• Cobertura: ${item.topping || '-'}`,
-        item.notes ? `• Observações do item: ${item.notes}` : null
-      ].filter(Boolean).join('\n')).join('\n\n');
+        item.tipo === 'Personalizado' ? `• Frutas: ${item.fruits.join(', ') || '-'}` : null,
+        item.tipo === 'Personalizado' ? `• Ingredientes: ${item.ingredients.join(', ') || '-'}` : (item.tipo === 'Tradicional' ? `• Ingredientes: Tapioca, Leite condensado` : null),
+        item.topping ? `• Cobertura: ${item.topping}` : null,
+        item.extras && item.extras.length ? `• Adicionais: ${item.extras.join(', ')}` : null,
+        item.drinks && item.drinks.length ? `• Bebidas: ${item.drinks.map(d => `${d.label} (${formatBRL(d.price)})`).join(', ')}` : null,
+        item.notes ? `• Obs.: ${item.notes}` : null
+      ].filter(Boolean).join('\n');
+
+      const blocoTrad = itensTrad.length
+        ? ['— Tradicionais —', ...itensTrad.map((it, idx) => formatItem(it, idx))].join('\n\n')
+        : '— Tradicionais —\nNenhum';
+
+      const blocoPers = itensPers.length
+        ? ['— Personalizados —', ...itensPers.map((it, idx) => formatItem(it, idx))].join('\n\n')
+        : '— Personalizados —\nNenhum';
+
+      const blocoDrinks = itensDrinks.length
+        ? ['— Bebidas —', ...itensDrinks.map((it, idx) => formatItem(it, idx))].join('\n\n')
+        : '';
+
+      const taxaEntrega = (neighborhoodInput.value === "Itinga-PA" && cart.length > 0) ? `\nTaxa de entrega (Itinga-PA): R$ 3,00` : '';
 
       const customerFields = [
         `Cliente: ${nameInput.value.trim()}`,
@@ -1020,12 +1013,16 @@ document.querySelectorAll('input[name="size"], input[name="fruits"], input[name=
       const message = [
         'Pedido — Açaiteria Itinga',
         '==============================',
-        itemsText,
+        blocoTrad,
+        '------------------------------',
+        blocoPers,
+        blocoDrinks ? '------------------------------' : '',
+        blocoDrinks,
         '==============================',
-        `Total: ${formatBRL(total)}`,
+        `Total: ${formatBRL(total)}${taxaEntrega}`,
         '',
         customerFields
-      ].join('\n');
+      ].filter(Boolean).join('\n');
 
       const phone = '559992247544';
       const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
@@ -1037,30 +1034,41 @@ document.querySelectorAll('input[name="size"], input[name="fruits"], input[name=
         endereco: addressInput.value.trim(),
         bairro: neighborhoodInput.value,
         pagamento: paymentInput.value,
-        observacoes: currentItem.notes, // observação do último copo montado
         itens: cart,
         total,
+        taxaEntrega: neighborhoodInput.value === "Itinga-PA" ? 3 : 0,
         data: new Date().toISOString()
       };
-      window.__salvarPedido?.(pedido);
 
-      setTimeout(() => location.reload(), 1000);
+      try {
+        if (window.salvarPedido) await window.salvarPedido(pedido);
+      } catch (err) {
+        console.error('Erro ao salvar pedido:', err);
+        Swal.fire({ icon:'error', title:'Erro ao salvar', text:'O pedido foi enviado no WhatsApp, mas não foi salvo no sistema.' });
+      }
+
+      Swal.fire({ icon:'success', title:'Pedido enviado!', text:'Seu pedido foi enviado e salvo no sistema.' })
+        .then(() => {
+          setTimeout(() => {
+            window.location.reload();
+            window.scrollTo({ top: 0, behavior: 'auto' });
+          }, 1000);
+        });
     });
 
-    // Helpers: Pix BR Code (EMV)
-    function buildPixBRCode({ key, name, city, amount, txid = 'ACAI' }) {
+    function buildPixBRCode({ key, name, city, amount, txid='ACAI' }) {
       const tlv = (id, value) => id + String(value.length).padStart(2, '0') + value;
-      const gui = tlv('00', 'BR.GOV.BCB.PIX');
+      const gui = tlv('00','BR.GOV.BCB.PIX');
       const mAccountInfo = tlv('26', gui + tlv('01', key));
-      const mc = tlv('52', '0000');
-      const cur = tlv('53', '986');
+      const mc = tlv('52','0000');
+      const cur = tlv('53','986');
       const amt = tlv('54', Number(amount).toFixed(2));
-      const cc = tlv('58', 'BR');
-      const nm = tlv('59', (name || '').slice(0, 25));
-      const ct = tlv('60', (city || '').slice(0, 15));
-      const add = tlv('62', tlv('05', (txid || '').slice(0, 25)));
-      const pfi = tlv('00', '01');
-      const poi = tlv('01', '12');
+      const cc = tlv('58','BR');
+      const nm = tlv('59', (name || '').slice(0,25));
+      const ct = tlv('60', (city || '').slice(0,15));
+      const add = tlv('62', tlv('05', (txid || '').slice(0,25)));
+      const pfi = tlv('00','01');
+      const poi = tlv('01','12');
       let payload = pfi + poi + mAccountInfo + mc + cur + amt + cc + nm + ct + add;
       payload += '63' + '04';
       const crc = crc16(payload);
@@ -1072,82 +1080,15 @@ document.querySelectorAll('input[name="size"], input[name="fruits"], input[name=
       const bytes = new TextEncoder().encode(payload);
       for (let b of bytes) {
         crc ^= (b << 8);
-        for (let i = 0; i < 8; i++) {
-          if (crc & 0x8000) { crc = (crc << 1) ^ poly } else { crc = (crc << 1) }
+        for (let i=0;i<8;i++) {
+          if (crc & 0x8000) { crc = (crc << 1) ^ poly; } else { crc = (crc << 1); }
           crc &= 0xFFFF;
         }
       }
-      return crc.toString(16).toUpperCase().padStart(4, '0');
+      return crc.toString(16).toUpperCase().padStart(4,'0');
     }
 
-    // Menu lateral
-    const btnMenu = document.getElementById("btnMenu");
-    const sideMenu = document.getElementById("sideMenu");
-    const closeMenu = document.getElementById("closeMenu");
-    btnMenu.addEventListener("click", () => sideMenu.classList.add("open"));
-    closeMenu.addEventListener("click", () => sideMenu.classList.remove("open"));
-
-    // Formulário feedback -> WhatsApp
-    document.getElementById("feedbackForm").addEventListener("submit", (e) => {
-      e.preventDefault();
-      const text = document.getElementById("feedbackText").value.trim();
-      if (!text) return alert("Digite sua mensagem.");
-      const url = `https://wa.me/5599992247544?text=${encodeURIComponent("Feedback: " + text)}`;
-      window.open(url, "_blank");
-      sideMenu.classList.remove("open");
-      document.getElementById("feedbackText").value = "";
-    });
-
-    
-function atualizarStatusLoja() {
-  const agora = new Date();
-  const dia = agora.getDay(); // 0=Domingo, 1=Segunda, ..., 6=Sábado
-  const hora = agora.getHours();
-  const minuto = agora.getMinutes();
-
-  const statusEl = document.getElementById("statusLoja");
-  const toggleSizesBtn = document.getElementById("toggleSizes");
-
-  // Segunda-feira = fechado
-  if (dia === 1) {
-    statusEl.textContent = "Estamos fechados! (Segunda é folga)";
-    statusEl.className = "status-loja fechado";
-
-    // 🔒 Bloqueia botão "Mostrar copos"
-    toggleSizesBtn.disabled = true;
-    toggleSizesBtn.style.opacity = "0.5";
-    toggleSizesBtn.style.cursor = "not-allowed";
-    return;
-  }
-
-  // Horário de funcionamento: 15h00 até 23h00
-  const aberto = (hora > 8 || (hora === 8 && minuto >= 0)) && hora < 23; // mudar o horario de 8 p/ 15
-
-  if (aberto) {
-    statusEl.textContent = "✅ Estamos abertos! Das 15h às 23h";
-    statusEl.className = "status-loja aberto";
-
-    // 🔓 Libera botão
-    toggleSizesBtn.disabled = false;
-    toggleSizesBtn.style.opacity = "1";
-    toggleSizesBtn.style.cursor = "pointer";
-  } else {
-    statusEl.textContent = "❌ Estamos fechados! Aberto das 15h às 23h";
-    statusEl.className = "status-loja fechado";
-
-    // 🔒 Bloqueia botão
-    toggleSizesBtn.disabled = true;
-    toggleSizesBtn.style.opacity = "0.5";
-    toggleSizesBtn.style.cursor = "not-allowed";
-  }
-}
-
-// chama ao carregar a página
-window.addEventListener("load", atualizarStatusLoja);
-// opcional: atualiza a cada minuto
-setInterval(atualizarStatusLoja, 60000);
-
-// Bloqueios de segurança (mantidos como no original)
+    // Bloqueios de segurança (mantidos como no original)
 document.addEventListener('keydown', function (e) {
     if (e.ctrlKey && (e.key === 'u' || e.key === 'U')) { e.preventDefault(); }
     if (e.key === 'F12') { e.preventDefault(); }
@@ -1156,7 +1097,6 @@ document.addEventListener('keydown', function (event) {
     if (event.ctrlKey && event.shiftKey && event.key === 'I') { event.preventDefault(); }
 });
 document.addEventListener('contextmenu', function (event) { event.preventDefault(); });
-
   </script>
 </body>
 </html>
