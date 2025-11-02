@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -27,7 +28,7 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    window.salvarPedido = async function(pedido) {
+    window.salvarPedido = async function (pedido) {
       try {
         await addDoc(collection(db, "pedidos"), pedido);
       } catch (e) {
@@ -38,170 +39,543 @@
   </script>
 
   <style>
+    .form {
+  padding-bottom: 120px; /* espaço extra para o botão não sumir */
+}
+
     :root {
       --primary: #8e44ad;
       --primary-dark: #6d2c91;
       --accent: #f1c40f;
       --bg: #faf6ff;
       --text: #2d3142;
-      --shadow: 0 8px 20px rgba(0,0,0,0.08);
+      --shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
       --radius: 16px;
     }
-    * { box-sizing: border-box }
-    body { margin:0; font-family:"Inter",system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; background:linear-gradient(180deg,#f8eaff,var(--bg)); color:var(--text); padding-bottom:90px; }
+
+    * {
+      box-sizing: border-box
+    }
+
+    body {
+      margin: 0;
+      font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: linear-gradient(180deg, #f8eaff, var(--bg));
+      color: var(--text);
+      padding-bottom: 90px;
+    }
 
     header {
 
-  top: 0; left: 0; right: 0;
+      top: 0;
+      left: 0;
+      right: 0;
 
-  background: linear-gradient(90deg, var(--primary), var(--primary-dark));
-  color: #fff;
-  padding: 12px 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;   /* centraliza conteúdo */
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-}
-
-.logo-wrap {
-  display: flex;
-  align-items: center;
-  justify-content: center;   /* garante centralização */
-}
-
-.logo-img {
-  width: 250px;   /* aumenta largura */
-  height: auto;   /* mantém proporção */
-  border-radius: 16px;
-  object-fit: cover;
-}
-
-    .card { border-radius:var(--radius); box-shadow:var(--shadow); padding:16px; margin-bottom:16px; color:#fff; }
-    .theme-purple { background:linear-gradient(135deg,#9b59b6,#8e44ad) }
-    .theme-orange { background:linear-gradient(135deg,#f39c12,#d35400) }
-    .theme-pink   { background:linear-gradient(135deg,#d2527f,#8e44ad) }
-    .theme-vinho  { background:linear-gradient(135deg,#6d214f,#b33771) }
-    .theme-red    { background:linear-gradient(135deg,#e74c3c,#c0392b) }
-    .theme-green  { background:linear-gradient(135deg,#27ae60,#145a32) }
-    .card h3 { margin:0 0 10px; font-size:22px }
-
-    .sizes { display:grid; grid-template-columns: repeat(2,1fr); gap:12px; }
-    .size { background:#fff; color:#2d3142; border-radius:14px; padding:12px; text-align:center; font-weight:700; box-shadow: var(--shadow); }
-    .size img { width:64px; height:64px; border-radius:12px; object-fit:cover; }
-    .size .sub { font-size:12px; color:#556 }
-    .size .price { margin-top:4px; color:#6d2c91; font-weight:800; }
-
-    .toggle-wrap { text-align:center; margin:20px 0 }
-    .toggle-btn {
-      background:linear-gradient(135deg,#9b59b6,#8e44ad); color:#fff; font-size:18px; font-weight:800;
-      padding:14px 24px; border:none; border-radius:50px; cursor:pointer; box-shadow:0 10px 25px rgba(0,0,0,0.25);
-      transition:transform .25s, box-shadow .25s;
+      background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+      color: #fff;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      /* centraliza conteúdo */
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     }
-    .toggle-btn:hover { transform:scale(1.05); box-shadow:0 14px 35px rgba(0,0,0,0.35); }
 
-    .options { display:grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap:10px; }
-    .option { background:#fff; color:#2d3142; border-radius:12px; padding:10px; display:flex; align-items:center; gap:10px; font-weight:600; box-shadow: var(--shadow); }
-    .option input { margin-right:8px; }
-    .option.disabled { opacity:.5; pointer-events:none }
+    .logo-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      /* garante centralização */
+    }
+
+    .logo-img {
+      width: 250px;
+      /* aumenta largura */
+      height: auto;
+      /* mantém proporção */
+      border-radius: 16px;
+      object-fit: cover;
+    }
+
+    .card {
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 16px;
+      margin-bottom: 16px;
+      color: #fff;
+    }
+
+    .theme-purple {
+      background: linear-gradient(135deg, #9b59b6, #8e44ad)
+    }
+
+    .theme-orange {
+      background: linear-gradient(135deg, #f39c12, #d35400)
+    }
+
+    .theme-pink {
+      background: linear-gradient(135deg, #d2527f, #8e44ad)
+    }
+
+    .theme-vinho {
+      background: linear-gradient(135deg, #6d214f, #b33771)
+    }
+
+    .theme-red {
+      background: linear-gradient(135deg, #e74c3c, #c0392b)
+    }
+
+    .theme-green {
+      background: linear-gradient(135deg, #27ae60, #145a32)
+    }
+
+    .card h3 {
+      margin: 0 0 10px;
+      font-size: 22px
+    }
+
+    .sizes {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .size {
+      background: #fff;
+      color: #2d3142;
+      border-radius: 14px;
+      padding: 12px;
+      text-align: center;
+      font-weight: 700;
+      box-shadow: var(--shadow);
+    }
+
+    .size img {
+      width: 64px;
+      height: 64px;
+      border-radius: 12px;
+      object-fit: cover;
+    }
+
+    .size .sub {
+      font-size: 12px;
+      color: #556
+    }
+
+    .size .price {
+      margin-top: 4px;
+      color: #6d2c91;
+      font-weight: 800;
+    }
+
+    .toggle-wrap {
+      text-align: center;
+      margin: 20px 0
+    }
+
+    .toggle-btn {
+      background: linear-gradient(135deg, #9b59b6, #8e44ad);
+      color: #fff;
+      font-size: 18px;
+      font-weight: 800;
+      padding: 14px 24px;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+      transition: transform .25s, box-shadow .25s;
+    }
+
+    .toggle-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 14px 35px rgba(0, 0, 0, 0.35);
+    }
+
+    .options {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 10px;
+    }
+
+    .option {
+      background: #fff;
+      color: #2d3142;
+      border-radius: 12px;
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 600;
+      box-shadow: var(--shadow);
+    }
+
+    .option input {
+      margin-right: 8px;
+    }
+
+    .option.disabled {
+      opacity: .5;
+      pointer-events: none
+    }
 
     @media (max-width: 640px) {
-      #fruits, #ingredients, #toppings, #extras, #drinks { grid-template-columns: 1fr 1fr; }
+
+      #fruits,
+      #ingredients,
+      #toppings,
+      #extras,
+      #drinks {
+        grid-template-columns: 1fr 1fr;
+      }
     }
 
-    .btn { border:none; border-radius:999px; padding:12px 16px; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:8px; box-shadow:var(--shadow); }
-    .btn.primary { background:var(--primary); color:#fff }
-    .btn.secondary { background:var(--accent); color:#3b2400 }
-    .btn.ghost { background:#fff; color:#6d2c91; border:2px solid #eee }
-    .btn.whatsapp { background:#25D366; color:#fff; justify-content:center; width:100%; }
+    .btn {
+      border: none;
+      border-radius: 999px;
+      padding: 12px 16px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: var(--shadow);
+    }
 
-    .add-to-cart-wrap { text-align:center; margin:25px 0; }
+    .btn.primary {
+      background: var(--primary);
+      color: #fff
+    }
+
+    .btn.secondary {
+      background: var(--accent);
+      color: #3b2400
+    }
+
+    .btn.ghost {
+      background: #fff;
+      color: #6d2c91;
+      border: 2px solid #eee
+    }
+
+    .btn.whatsapp {
+      background: #25D366;
+      color: #fff;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .add-to-cart-wrap {
+      text-align: center;
+      margin: 25px 0;
+    }
+
     .add-to-cart-big {
-      background:linear-gradient(135deg,#029402,#47ad44); color:#fff; font-size:22px; font-weight:800;
-      border:none; border-radius:50px; cursor:pointer; width:100%; max-width:380px;
-      padding:14px 24px;
+      background: linear-gradient(135deg, #029402, #47ad44);
+      color: #fff;
+      font-size: 22px;
+      font-weight: 800;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      width: 100%;
+      max-width: 380px;
+      padding: 14px 24px;
     }
 
-    .cart-panel { position:fixed; top:0; right:0; width:min(400px,90vw); height:100vh; background:#fff; transform:translateX(105%); transition:.3s; z-index:1100; display:flex; flex-direction:column; }
-    .cart-panel.open { transform:translateX(0) }
-    .cart-header { padding:16px; background:linear-gradient(90deg,#9b59b6,#8e44ad); color:#fff; display:flex; align-items:center; justify-content:space-between; font-weight:800; }
-    .cart-items { flex-grow:1; overflow-y:auto; padding:8px; display:grid; gap:6px; }
-    .cart-item { background:#fff; border:1px solid #eef1f5; border-radius:12px; padding:10px; box-shadow:var(--shadow); }
-    .cart-title { font-weight:800; font-size:15px; color:#1b1f2a }
-    .cart-price { font-weight:800; font-size:15px; color:#8e44ad }
-    .list-row { margin-top:6px; color:#333 }
-    .total-bar { background:#f3e5f5; padding:12px; font-weight:800; text-align:right; font-size:18px; border-top:2px solid #eaeef5; color:#8e44ad; }
+    .cart-panel {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: min(400px, 90vw);
+      height: 100vh;
+      background: #fff;
+      transform: translateX(105%);
+      transition: .3s;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+    }
 
-    .form { padding:12px; display:grid; gap:8px }
-    .input textarea, .input input, .input select { width:100%; border:2px solid #eaeef5; border-radius:10px; padding:10px; font-size:14px; outline:none; background:#fff; color:#2d3142; }
-    .input textarea:focus, .input input:focus, .input select:focus { border-color:var(--primary); box-shadow:0 0 0 4px rgba(142,68,173,0.12); }
+    .cart-panel.open {
+      transform: translateX(0)
+    }
 
-    .cart-summary { position:fixed; bottom:0; left:0; right:0; background:var(--primary-dark); color:#fff; display:flex; justify-content:space-between; align-items:center; padding:12px 20px; font-weight:700; font-size:16px; box-shadow:0 -4px 12px rgba(0,0,0,0.15); z-index:950; gap:20px; }
-    .cart-summary .left { display:flex; flex-direction:column; align-items:flex-start; gap:6px; }
-    .cart-summary .badge { color:#fff; border-radius:999px; padding:6px 10px; font-weight:800; background:rgba(255,255,255,0.2); }
-    #summaryOpen { background:linear-gradient(135deg,#25D366,#128C7E); color:#fff; font-size:15px; font-weight:800; border:none; border-radius:50px; cursor:pointer; box-shadow:0 6px 15px rgba(0,0,0,0.25); transition:transform .25s, box-shadow .25s; }
-    #summaryOpen:hover { transform:scale(1.08); box-shadow:0 10px 25px rgba(0,0,0,0.35); background:linear-gradient(135deg,#128C7E,#0d6d5a); }
+    .cart-header {
+      padding: 16px;
+      background: linear-gradient(90deg, #9b59b6, #8e44ad);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-weight: 800;
+    }
+
+    .cart-items {
+      flex-grow: 1;
+      overflow-y: auto;
+      padding: 8px;
+      display: grid;
+      gap: 6px;
+    }
+
+    .cart-item {
+      background: #fff;
+      border: 1px solid #eef1f5;
+      border-radius: 12px;
+      padding: 10px;
+      box-shadow: var(--shadow);
+    }
+
+    .cart-title {
+      font-weight: 800;
+      font-size: 15px;
+      color: #1b1f2a
+    }
+
+    .cart-price {
+      font-weight: 800;
+      font-size: 15px;
+      color: #520474
+    }
+
+    .list-row {
+      margin-top: 6px;
+      color: #333
+    }
+
+    .total-bar {
+      background: #f3e5f5;
+      padding: 12px;
+      font-weight: 800;
+      text-align: right;
+      font-size: 18px;
+      border-top: 2px solid #eaeef5;
+      color: #8e44ad;
+    }
+
+    .form {
+      padding: 12px;
+      display: grid;
+      gap: 8px
+      
+    }
+.form {
+  padding-bottom: 120px; /* espaço extra para o botão não sumir */
+}
+
+    .input textarea,
+    .input input,
+    .input select {
+      width: 100%;
+      border: 2px solid #eaeef5;
+      border-radius: 10px;
+      padding: 10px;
+      font-size: 14px;
+      outline: none;
+      background: #fff;
+      color: #2d3142;
+    }
+
+    .input textarea:focus,
+    .input input:focus,
+    .input select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(142, 68, 173, 0.12);
+    }
+
+    .cart-summary {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--primary-dark);
+      color: #fff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 20px;
+      font-weight: 700;
+      font-size: 16px;
+      box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.15);
+      z-index: 950;
+      gap: 20px;
+    }
+
+    .cart-summary .left {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 6px;
+    }
+
+    .cart-summary .badge {
+      color: #fff;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-weight: 800;
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    #summaryOpen {
+      background: linear-gradient(135deg, #25D366, #128C7E);
+      color: #fff;
+      font-size: 15px;
+      font-weight: 800;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
+      transition: transform .25s, box-shadow .25s;
+    }
+
+    #summaryOpen:hover {
+      transform: scale(1.08);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+      background: linear-gradient(135deg, #128C7E, #0d6d5a);
+    }
 
     .big-toast {
-      position: fixed; top: 17%; left: 50%; transform: translate(-50%, -50%) scale(0.9);
-      background: rgba(0,0,0,0.85); color: #fff; font-size: 22px; font-weight: 900;
-      padding: 20px; border-radius: 16px; text-align: center; z-index: 3000;
-      opacity: 0; transition: all 0.4s ease; min-width: 220px;
+      position: fixed;
+      top: 17%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.9);
+      background: rgba(0, 0, 0, 0.85);
+      color: #fff;
+      font-size: 22px;
+      font-weight: 900;
+      padding: 20px;
+      border-radius: 16px;
+      text-align: center;
+      z-index: 3000;
+      opacity: 0;
+      transition: all 0.4s ease;
+      min-width: 220px;
     }
-    .big-toast.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+
+    .big-toast.show {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
 
     #btnTop {
-      position:fixed; bottom:120px; right:20px; z-index:1000;
-      background:#8e44ad; color:#fff; border:none; border-radius:50%;
-      width:50px; height:50px; font-size:22px; cursor:pointer;
-      box-shadow:0 4px 12px rgba(0,0,0,0.3);
+      position: fixed;
+      bottom: 120px;
+      right: 20px;
+      z-index: 1000;
+      background: #8e44ad;
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      font-size: 22px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     }
 
     footer {
-      position:fixed; bottom:0; left:0; right:0;
-      background:#8e44ad; color:#fff; text-align:center; padding:10px;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #8e44ad;
+      color: #fff;
+      text-align: center;
+      padding: 10px;
     }
+
     footer button {
-      background:#fff; color:#8e44ad; border:none; padding:10px 20px;
-      border-radius:20px; font-weight:700; cursor:pointer;
+      background: #fff;
+      color: #8e44ad;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 20px;
+      font-weight: 700;
+      cursor: pointer;
     }
 
     .side-menu {
-      position:fixed; bottom:0; right:-320px; width:300px; height:100%;
-      background:#fff; box-shadow:-6px 0 15px rgba(0,0,0,0.2);
-      transition:right .3s ease; display:flex; flex-direction:column; z-index:1200;
+      position: fixed;
+      bottom: 0;
+      right: -320px;
+      width: 300px;
+      height: 100%;
+      background: #fff;
+      box-shadow: -6px 0 15px rgba(0, 0, 0, 0.2);
+      transition: right .3s ease;
+      display: flex;
+      flex-direction: column;
+      z-index: 1200;
     }
-    .side-menu.open { right:0; }
-    .side-header { background:#8e44ad; color:#fff; padding:15px; display:flex; justify-content:space-between; align-items:center; }
-    .side-form { padding:15px; display:flex; flex-direction:column; gap:10px; }
-    .side-form textarea { flex:1; min-height:120px; padding:10px; border:1px solid #ccc; border-radius:8px; }
-   
-   /* aumenta o tamanho dos checkboxes e radios */
-.option input[type="checkbox"],
-.option input[type="radio"] {
-  width: 22px;
-  height: 22px;
-  transform: scale(1); /* aumenta a escala */
-  margin-right: 10px;
-  cursor: pointer;
-}
- .side-form button { background:#25D366; color:#fff; border:none; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer; }
- /* horario */
- .aviso-horario {
-  text-align: center;
-  padding: 14px;
-  font-size: 16px;
-  font-weight: 600;
-  color: #fff;
-  border-radius: 10px;
-}
-.aviso-aberto {
-  background: linear-gradient(90deg, #27ae60, #2ecc71); /* verde */
-}
-.aviso-fechado {
-  background: linear-gradient(90deg, #c0392b, #e74c3c); /* vermelho */
-}
 
- 
+    .side-menu.open {
+      right: 0;
+    }
+
+    .side-header {
+      background: #8e44ad;
+      color: #fff;
+      padding: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .side-form {
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .side-form textarea {
+      flex: 1;
+      min-height: 120px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+
+    /* aumenta o tamanho dos checkboxes e radios */
+    .option input[type="checkbox"],
+    .option input[type="radio"] {
+      width: 22px;
+      height: 22px;
+      transform: scale(1);
+      /* aumenta a escala */
+      margin-right: 10px;
+      cursor: pointer;
+    }
+
+    .side-form button {
+      background: #25D366;
+      color: #fff;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    /* horario */
+    .aviso-horario {
+      text-align: center;
+      padding: 14px;
+      font-size: 16px;
+      font-weight: 600;
+      color: #fff;
+      border-radius: 10px;
+    }
+
+    .aviso-aberto {
+      background: linear-gradient(90deg, #27ae60, #2ecc71);
+      /* verde */
+    }
+
+    .aviso-fechado {
+      background: linear-gradient(90deg, #c0392b, #e74c3c);
+      /* vermelho */
+    }
   </style>
 </head>
 
@@ -213,55 +587,56 @@
     <div class="logo-wrap">
       <img src="acaizap.jpg" alt="Logo Açaiteria" class="logo-img">
       <!-- <strong>Açaiteria Itinga</strong> -->
-    </div>  
+    </div>
   </header>
-<br>
-<script>
-function verificarHorario() {
-  const agora = new Date();
-  const dia = agora.getDay(); // 0=Dom, 1=Seg, ..., 6=Sáb
-  const hora = agora.getHours();
-  const minuto = agora.getMinutes();
+  <br>
+  <script>
+    function verificarHorario() {
+      const agora = new Date();
+      const dia = agora.getDay(); // 0=Dom, 1=Seg, ..., 6=Sáb
+      const hora = agora.getHours();
+      const minuto = agora.getMinutes();
 
-  const aviso = document.getElementById("aviso-horario");
+      const aviso = document.getElementById("aviso-horario");
 
-  // Quinta-feira (dia 4) = fechado
-  const fechadoHoje = (dia === 4);
+      // Quinta-feira (dia 4) = fechado
+      const fechadoHoje = (dia === 4);
 
-  // Horário de funcionamento: 15h às 22h
-  const dentroHorario = (hora > 15 || (hora === 8 && minuto >= 0)) && hora < 22;
+      // Horário de funcionamento: 15h às 22h
+      const dentroHorario = (hora > 15 || (hora === 8 && minuto >= 0)) && hora < 22;
 
-  const aberto = !fechadoHoje && dentroHorario;
+      const aberto = !fechadoHoje && dentroHorario;
 
-  if (aberto) {
-    aviso.className = "aviso-horario aviso-aberto";
-    aviso.innerHTML = "✅ Estamos ABERTOS! das 15h às 22h.";
-    ativarInputs(true);
-  } else {
-    aviso.className = "aviso-horario aviso-fechado";
-    aviso.innerHTML = "⛔ Estamos FECHADOS agora. Lembrete: Quinta é folga.";
-    ativarInputs(false);
-  }
-}
+      if (aberto) {
+        aviso.className = "aviso-horario aviso-aberto";
+        aviso.innerHTML = "✅ Estamos ABERTOS! das 15h às 22h.";
+        ativarInputs(true);
+      } else {
+        aviso.className = "aviso-horario aviso-fechado";
+        aviso.innerHTML = "⛔ Estamos FECHADOS agora. Lembrete: Quinta é folga.";
+        ativarInputs(false);
+      }
+    }
 
-function ativarInputs(ativo) {
-  document.querySelectorAll("button, input, select, textarea").forEach(el => {
-    el.disabled = !ativo;
-  });
-}
+    function ativarInputs(ativo) {
+      document.querySelectorAll("button, input, select, textarea").forEach(el => {
+        el.disabled = !ativo;
+      });
+    }
 
-// Garante que só roda depois que a página carregar
-window.addEventListener("DOMContentLoaded", () => {
-  verificarHorario();
-  setInterval(verificarHorario, 60000); // revalida a cada minuto
-});
-</script>
+    // Garante que só roda depois que a página carregar
+    window.addEventListener("DOMContentLoaded", () => {
+      verificarHorario();
+      setInterval(verificarHorario, 60000); // revalida a cada minuto
+    });
+  </script>
 
   <main class="container">
-     <div id="aviso-horario" class="aviso-horario"></div>
+    <div id="aviso-horario" class="aviso-horario"></div>
     <!-- Botão copos personalizados -->
     <div class="toggle-wrap">
-      <button class="toggle-btn" id="toggleSizes"><i class="fa-solid fa-bowl-rice fa-bounce"></i> Copos personalizados</button>
+      <button class="toggle-btn" id="toggleSizes"><i class="fa-solid fa-bowl-rice fa-bounce"></i> Copos
+        personalizados</button>
     </div>
 
     <!-- Copos personalizados -->
@@ -304,7 +679,8 @@ window.addEventListener("DOMContentLoaded", () => {
 
     <!-- Botão copos tradicionais -->
     <div class="toggle-wrap">
-      <button class="toggle-btn" id="toggleTraditionals"><i class="fa-solid fa-bowl-rice fa-bounce"></i> Copos tradicionais</button>
+      <button class="toggle-btn" id="toggleTraditionals"><i class="fa-solid fa-bowl-rice fa-bounce"></i> Copos
+        tradicionais</button>
     </div>
 
     <!-- Copos tradicionais -->
@@ -357,7 +733,8 @@ window.addEventListener("DOMContentLoaded", () => {
     <section class="card theme-red" id="extrasCard" style="display:none;">
       <h3><i class="fas fa-star"></i> Adicionais</h3>
       <div class="options" id="extras"></div>
-      <div class="input" style="margin-top:8px;"><span class="label">Cada adicional custa R$ 4,00 (pode escolher mais de um).</span></div>
+      <div class="input" style="margin-top:8px;"><span class="label">Cada adicional custa R$ 4,00 (pode escolher mais de
+          um).</span></div>
     </section>
 
     <!-- Bebidas -->
@@ -380,7 +757,8 @@ window.addEventListener("DOMContentLoaded", () => {
     <!-- Observações -->
     <section class="card theme-red">
       <h3><i class="fas fa-comment-dots"></i> Observações</h3>
-      <div class="input"><textarea id="notes" rows="2" placeholder="Ex.: pouco xarope, sem granola, ponto do açaí… (opcional)"></textarea></div>
+      <div class="input"><textarea id="notes" rows="2"
+          placeholder="Ex.: pouco xarope, sem granola, ponto do açaí… (opcional)"></textarea></div>
       <div class="actions" style="margin-top:10px;"><button class="btn ghost" id="reset">Limpar escolhas</button></div>
     </section>
 
@@ -396,13 +774,18 @@ window.addEventListener("DOMContentLoaded", () => {
       <strong>🛒 Seu carrinho</strong>
       <button class="btn secondary" id="closeCart">Continuar pedindo</button>
     </div>
-    <div class="cart-items" id="cartItems"><div class="empty">Seu carrinho está vazio. Selecione o tamanho do copo ou bebidas para começar.</div></div>
+    <div class="cart-items" id="cartItems">
+      <div class="empty">Seu carrinho está vazio. Selecione o tamanho do copo ou bebidas para começar.</div>
+    </div>
     <div class="total-bar" id="totalBar">Total: R$ 0,00</div>
 
     <div class="form">
-      <div class="input"><span class="label">Nome</span><input id="name" type="text" placeholder="Seu nome" required></div>
-      <div class="input"><span class="label">Telefone</span><input id="phone" type="tel" placeholder="(99) 9 9999-9999" required></div>
-      <div class="input"><span class="label">Endereço</span><input id="address" type="text" placeholder="Rua, número" required></div>
+      <div class="input"><span class="label">Nome</span><input id="name" type="text" placeholder="Seu nome" required>
+      </div>
+      <div class="input"><span class="label">Telefone</span><input id="phone" type="tel" placeholder="(99) 9 9999-9999"
+          required></div>
+      <div class="input"><span class="label">Endereço</span><input id="address" type="text" placeholder="Rua, número"
+          required></div>
       <div class="input">
         <span class="label">Bairro</span>
         <select id="neighborhood" required>
@@ -431,7 +814,8 @@ window.addEventListener("DOMContentLoaded", () => {
           <option>Pix</option>
         </select>
       </div>
-      <div class="actions" style="justify-content:flex-end;"><button class="btn whatsapp" id="sendWhatsapp">Enviar pedido no WhatsApp</button></div>
+      <div class="actions" style="justify-content:flex-end;"><button class="btn whatsapp" id="sendWhatsapp">Enviar
+          pedido no WhatsApp</button></div>
       <div class="label" style="text-align:right;">Envio para: 55 99 9224-7544</div>
     </div>
   </aside>
@@ -458,15 +842,15 @@ window.addEventListener("DOMContentLoaded", () => {
       <span><i class="fas fa-shopping-basket"></i> Itens: <span class="badge" id="summaryCount">0</span></span>
       <span>Total: <span class="badge" id="summaryTotal">R$ 0,00</span></span>
     </div>
-     <button id="summaryOpen" class="btn ghost"><i class="fas fa-shopping-cart"></i> Carrinho</button>
+    <button id="summaryOpen" class="btn ghost"><i class="fas fa-shopping-cart"></i> Carrinho</button>
   </div>
 
   <script>
     // Dados
-    const FRUITS = ["Banana","Morango","Manga","Kiwi","Uva","Abacaxi","Pera","Melão","Mamão","Pitaia"];
-    const INGREDIENTS = ["Granola","Leite em pó","Paçoca","Amendoim","Jujuba","Castanha","Cereal","Tapioca","Look","Chocoball","Confete","Cookies","Disquete de chocolatee","Pé de moleque","Sucrilhos","Farinha lactea","Bis","Aveia","Flocos","Mel","Gostas de chocolate"];
-    const TOPPINGS = ["Chocolate","Morango","Leite condensado"];
-    const EXTRAS = ["Nutela","Cupuaçú","Doce de leite","Maracujá","Creme de ninho","Creme de ovomaltine","Creme de paçoca","Creme de morango"]; // R$4 cada
+    const FRUITS = ["Banana", "Morango", "Manga", "Kiwi", "Uva", "Abacaxi", "Pera", "Melão", "Mamão", "Pitaia"];
+    const INGREDIENTS = ["Granola", "Leite em pó", "Paçoca", "Amendoim", "Jujuba", "Castanha", "Cereal", "Tapioca", "Look", "Chocoball", "Confete", "Cookies", "Disquete de chocolatee", "Pé de moleque", "Sucrilhos", "Farinha lactea", "Bis", "Aveia", "Flocos", "Mel", "Gostas de chocolate"];
+    const TOPPINGS = ["Chocolate", "Morango", "Leite condensado"];
+    const EXTRAS = ["Nutela", "Cupuaçú", "Doce de leite", "Maracujá", "Creme de ninho", "Creme de ovomaltine", "Creme de paçoca", "Creme de morango"]; // R$4 cada
     const DRINKS = [
       { label: "Água 500ml", price: 3 },
       { label: "Água c/ gás", price: 4 },
@@ -476,20 +860,20 @@ window.addEventListener("DOMContentLoaded", () => {
     ];
 
     const EMOJI = {
-      Banana:"🍌", Morango:"🍓", Manga:"🥭", Kiwi:"🥝", Uva:"🍇", Abacaxi:"🍍",
-      Pera:"🍐", "Melão":"🍈", "Mamão":"🍈", Pitaia:"🐉",
-      Granola:"🥣", "Leite em pó":"🥛", Paçoca:"🥜", Amendoim:"🥜", Jujuba:"🍬", Castanha:"🌰",
-      Cereal:"🥣", Tapioca:"🌾", Look:"🍫", Chocoball:"🍫", Confete:"🍭", Cookies:"🍪",
-      "Disquete de chocolatee":"🍫", "Pé de moleque":"🥜", Sucrilhos:"🥣", "Farinha lactea":"🥛",
-      Bis:"🍫", Aveia:"🌾", Flocos:"❄️", Mel:"🍯", "Gostas de chocolate":"🍫",
-      Chocolate:"🍫", Caramelo:"🍯", "Leite condensado":"🥛"
+      Banana: "🍌", Morango: "🍓", Manga: "🥭", Kiwi: "🥝", Uva: "🍇", Abacaxi: "🍍",
+      Pera: "🍐", "Melão": "🍈", "Mamão": "🍈", Pitaia: "🐉",
+      Granola: "🥣", "Leite em pó": "🥛", Paçoca: "🥜", Amendoim: "🥜", Jujuba: "🍬", Castanha: "🌰",
+      Cereal: "🥣", Tapioca: "🌾", Look: "🍫", Chocoball: "🍫", Confete: "🍭", Cookies: "🍪",
+      "Disquete de chocolatee": "🍫", "Pé de moleque": "🥜", Sucrilhos: "🥣", "Farinha lactea": "🥛",
+      Bis: "🍫", Aveia: "🌾", Flocos: "❄️", Mel: "🍯", "Gostas de chocolate": "🍫",
+      Chocolate: "🍫", Caramelo: "🍯", "Leite condensado": "🥛"
     };
 
     const PIX_KEY = '+5599992247544';
     const PIX_NAME = 'Carlos de Freitas Rocha';
     const PIX_CITY = 'IMPERATRIZ';
 
-    const formatBRL = n => n.toLocaleString('pt-BR', { style:'currency', currency:'BRL' });
+    const formatBRL = n => n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
     // Elementos
     const fruitsWrap = document.getElementById('fruits');
@@ -565,7 +949,7 @@ window.addEventListener("DOMContentLoaded", () => {
       toggleSizesBtn.innerHTML = '<i class="fa-solid fa-bowl-rice fa-bounce"></i></i> Copos personalizados';
       fruitsSection.style.display = "none";
       ingredientsSection.style.display = "none";
-      document.querySelectorAll('input[name="fruits"], input[name="ingredients"]').forEach(i => { i.checked=false; i.disabled=false; i.closest('.option')?.classList.remove('disabled'); });
+      document.querySelectorAll('input[name="fruits"], input[name="ingredients"]').forEach(i => { i.checked = false; i.disabled = false; i.closest('.option')?.classList.remove('disabled'); });
     }
     function openTraditionalsCard() {
       traditionalsCard.style.display = "block";
@@ -574,7 +958,7 @@ window.addEventListener("DOMContentLoaded", () => {
       toggleSizesBtn.innerHTML = '<i class="fa-solid fa-bowl-rice fa-bounce"></i></i> Copos personalizados';
       fruitsSection.style.display = "none";
       ingredientsSection.style.display = "none";
-      document.querySelectorAll('input[name="fruits"], input[name="ingredients"]').forEach(i => { i.checked=false; i.disabled=false; i.closest('.option')?.classList.remove('disabled'); });
+      document.querySelectorAll('input[name="fruits"], input[name="ingredients"]').forEach(i => { i.checked = false; i.disabled = false; i.closest('.option')?.classList.remove('disabled'); });
     }
     function closeTraditionalsCard() {
       traditionalsCard.style.display = "none";
@@ -609,16 +993,16 @@ window.addEventListener("DOMContentLoaded", () => {
     });
 
     // Render opções SEM imagens (frutas, ingredientes, extras, cobertura)
-    function createTextOption(labelText, name, type="checkbox") {
+    function createTextOption(labelText, name, type = "checkbox") {
       const d = document.createElement('label');
       d.className = 'option';
       d.innerHTML = `<input type="${type}" name="${name}" value="${labelText}">${labelText}`;
       return d;
     }
-    FRUITS.forEach(f => fruitsWrap.appendChild(createTextOption(f,'fruits')));
-    INGREDIENTS.forEach(i => ingredientsWrap.appendChild(createTextOption(i,'ingredients')));
-    TOPPINGS.forEach(t => toppingsWrap.appendChild(createTextOption(t,'toppings','radio')));
-    EXTRAS.forEach(e => extrasWrap.appendChild(createTextOption(e,'extras')));
+    FRUITS.forEach(f => fruitsWrap.appendChild(createTextOption(f, 'fruits')));
+    INGREDIENTS.forEach(i => ingredientsWrap.appendChild(createTextOption(i, 'ingredients')));
+    TOPPINGS.forEach(t => toppingsWrap.appendChild(createTextOption(t, 'toppings', 'radio')));
+    EXTRAS.forEach(e => extrasWrap.appendChild(createTextOption(e, 'extras')));
 
     // Render bebidas (checkbox com preço)
     function createDrinkOption(drink) {
@@ -671,10 +1055,10 @@ window.addEventListener("DOMContentLoaded", () => {
       });
     }
 
-    function showToast(text, emoji='') {
+    function showToast(text, emoji = '') {
       const toast = document.createElement('div');
       toast.className = 'big-toast';
-      toast.innerHTML = `${emoji ? '<div style="font-size:52px; line-height:1; margin-bottom:8px;">'+emoji+'</div>' : ''}<div style="font-size:18px;font-weight:800;">${text}</div>`;
+      toast.innerHTML = `${emoji ? '<div style="font-size:52px; line-height:1; margin-bottom:8px;">' + emoji + '</div>' : ''}<div style="font-size:18px;font-weight:800;">${text}</div>`;
       document.body.appendChild(toast);
       setTimeout(() => toast.classList.add('show'), 50);
       setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 200); }, 1400);
@@ -720,7 +1104,7 @@ window.addEventListener("DOMContentLoaded", () => {
         updateLimitsFromSize();
 
         if (type === 'traditional') {
-          addToCartWrap.scrollIntoView({ behavior:'smooth', block:'center' });
+          addToCartWrap.scrollIntoView({ behavior: 'smooth', block: 'center' });
           fruitsSection.style.display = "none";
           ingredientsSection.style.display = "none";
         } else {
@@ -728,7 +1112,7 @@ window.addEventListener("DOMContentLoaded", () => {
             fruitsSection.style.display = "block";
             ingredientsSection.style.display = "block";
           }
-          fruitsSection.scrollIntoView({ behavior:'smooth', block:'center' });
+          fruitsSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
       }
 
@@ -745,11 +1129,11 @@ window.addEventListener("DOMContentLoaded", () => {
 
       const drinksSelected = Array.from(document.querySelectorAll('input[name="drinks"]:checked'))
         .map(d => ({ label: d.value, price: parseFloat(d.dataset.price) }));
-      const drinksCost = drinksSelected.reduce((s,d) => s + d.price, 0);
+      const drinksCost = drinksSelected.reduce((s, d) => s + d.price, 0);
 
       if (!selected) {
         if (drinksSelected.length === 0) {
-          Swal.fire({ icon:'info', title:'Selecione algo', text:'Escolha um copo ou ao menos uma bebida.' });
+          Swal.fire({ icon: 'info', title: 'Selecione algo', text: 'Escolha um copo ou ao menos uma bebida.' });
           return;
         }
         const item = {
@@ -795,7 +1179,7 @@ window.addEventListener("DOMContentLoaded", () => {
           basePrice: parseFloat(selected.dataset.price),
           price: parseFloat(selected.dataset.price) + extrasCost + drinksCost,
           fruits: [],
-          ingredients: ["Tapioca","Leite condensado"],
+          ingredients: ["Tapioca", "Leite condensado"],
           topping: '',
           extras: extrasSelected,
           drinks: drinksSelected,
@@ -815,13 +1199,13 @@ window.addEventListener("DOMContentLoaded", () => {
     summaryOpenTop.addEventListener('click', openCart);
     closeCartBtn.addEventListener('click', closeCart);
 
-    function resetSelections(clearCart=true) {
+    function resetSelections(clearCart = true) {
       document.querySelectorAll('input[name="size"]').forEach(r => r.checked = false);
-      document.querySelectorAll('input[name="fruits"]').forEach(i => { i.checked=false; i.disabled=false; i.closest('.option')?.classList.remove('disabled'); });
-      document.querySelectorAll('input[name="ingredients"]').forEach(i => { i.checked=false; i.disabled=false; i.closest('.option')?.classList.remove('disabled'); });
-      document.querySelectorAll('input[name="toppings"]').forEach(t => { t.checked=false; t.disabled=false; t.closest('.option')?.classList.remove('disabled'); });
-      document.querySelectorAll('input[name="extras"]').forEach(t => { t.checked=false; t.disabled=false; t.closest('.option')?.classList.remove('disabled'); });
-      document.querySelectorAll('input[name="drinks"]').forEach(d => { d.checked=false; d.disabled=false; d.closest('.option')?.classList.remove('disabled'); });
+      document.querySelectorAll('input[name="fruits"]').forEach(i => { i.checked = false; i.disabled = false; i.closest('.option')?.classList.remove('disabled'); });
+      document.querySelectorAll('input[name="ingredients"]').forEach(i => { i.checked = false; i.disabled = false; i.closest('.option')?.classList.remove('disabled'); });
+      document.querySelectorAll('input[name="toppings"]').forEach(t => { t.checked = false; t.disabled = false; t.closest('.option')?.classList.remove('disabled'); });
+      document.querySelectorAll('input[name="extras"]').forEach(t => { t.checked = false; t.disabled = false; t.closest('.option')?.classList.remove('disabled'); });
+      document.querySelectorAll('input[name="drinks"]').forEach(d => { d.checked = false; d.disabled = false; d.closest('.option')?.classList.remove('disabled'); });
       document.getElementById('notes').value = '';
       limits = { fruits: 0, ingredients: 0 };
       if (clearCart) cart = [];
@@ -838,23 +1222,23 @@ window.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      cart.forEach((item,index) => {
+      cart.forEach((item, index) => {
         const div = document.createElement('div');
         div.className = 'cart-item';
         div.innerHTML = `
           <div class="top" style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
-            <div class="cart-title">${item.tipo}${item.size ? ' • Copo '+item.size+'ml' : ''}</div>
+            <div class="cart-title">${item.tipo}${item.size ? ' • Copo ' + item.size + 'ml' : ''}</div>
             <div style="display:flex;align-items:center;gap:8px;">
               <div class="cart-price">${formatBRL(item.price)}</div>
               <button class="btn ghost btn-remove" data-index="${index}">Remover</button>
             </div>
           </div>
           ${item.tipo === 'Personalizado' ? `
-            <div class="list-row"><strong>Frutas:</strong> ${item.fruits.map(f => (EMOJI[f]||'')+' '+f).join(', ') || '-'}</div>
-            <div class="list-row"><strong>Ingredientes:</strong> ${item.ingredients.map(i => (EMOJI[i]||'')+' '+i).join(', ') || '-'}</div>
+            <div class="list-row"><strong>Frutas:</strong> ${item.fruits.map(f => (EMOJI[f] || '') + ' ' + f).join(', ') || '-'}</div>
+            <div class="list-row"><strong>Ingredientes:</strong> ${item.ingredients.map(i => (EMOJI[i] || '') + ' ' + i).join(', ') || '-'}</div>
             <div class="list-row"><strong>Cobertura:</strong> ${item.topping || '-'}</div>
           ` : item.tipo === 'Tradicional' ? `
-            <div class="list-row"><strong>Ingredientes fixos:</strong> ${(EMOJI['Tapioca']||'')} Tapioca, ${(EMOJI['Leite condensado']||'')} Leite condensado</div>
+            <div class="list-row"><strong>Ingredientes fixos:</strong> ${(EMOJI['Tapioca'] || '')} Tapioca, ${(EMOJI['Leite condensado'] || '')} Leite condensado</div>
           ` : ''}
           ${item.extras && item.extras.length ? `<div class="list-row"><strong>Adicionais:</strong> ${item.extras.join(', ')}</div>` : ''}
           ${item.drinks && item.drinks.length ? `<div class="list-row"><strong>Bebidas:</strong> ${item.drinks.map(d => `${d.label} (${formatBRL(d.price)})`).join(', ')}</div>` : ''}
@@ -866,9 +1250,9 @@ window.addEventListener("DOMContentLoaded", () => {
       cartItems.querySelectorAll('.btn-remove').forEach(btn => {
         btn.addEventListener('click', async e => {
           const idx = Number(e.currentTarget.dataset.index);
-          const confirm = await Swal.fire({ title:'Remover item?', showCancelButton:true, confirmButtonText:'Sim' });
+          const confirm = await Swal.fire({ title: 'Remover item?', showCancelButton: true, confirmButtonText: 'Sim' });
           if (confirm.isConfirmed) {
-            cart.splice(idx,1);
+            cart.splice(idx, 1);
             renderCart();
           }
         });
@@ -878,7 +1262,7 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 
     function cartTotals() {
-      let total = cart.reduce((s,i) => s + i.price, 0);
+      let total = cart.reduce((s, i) => s + i.price, 0);
       const count = cart.length;
       if (neighborhoodInput.value === "Itinga-PA" && total > 0) {
         total += 3;
@@ -895,9 +1279,9 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 
     phoneInput.addEventListener('input', () => {
-      let v = phoneInput.value.replace(/\D/g,'');
+      let v = phoneInput.value.replace(/\D/g, '');
       v = v.replace(/^(\d{2})(\d)/, '($1) $2').replace(/(\d{5})(\d)/, '$1-$2');
-      phoneInput.value = v.slice(0,15);
+      phoneInput.value = v.slice(0, 15);
     });
 
     paymentInput.addEventListener('change', async () => {
@@ -905,7 +1289,7 @@ window.addEventListener("DOMContentLoaded", () => {
       const val = paymentInput.value;
 
       if (val === 'Pix') {
-        if (total <= 0) { await Swal.fire({ icon:'info', title:'Carrinho vazio', text:'Adicione itens para gerar o Pix.' }); paymentInput.value=''; return; }
+        if (total <= 0) { await Swal.fire({ icon: 'info', title: 'Carrinho vazio', text: 'Adicione itens para gerar o Pix.' }); paymentInput.value = ''; return; }
         const code = buildPixBRCode({ key: PIX_KEY, name: PIX_NAME, city: PIX_CITY, amount: total, txid: 'ACAI' });
         const canvas = document.createElement('canvas');
         await QRCode.toCanvas(canvas, code, { width: 220 });
@@ -929,14 +1313,14 @@ window.addEventListener("DOMContentLoaded", () => {
             document.getElementById('copyPixBtn')?.addEventListener('click', async () => {
               const ta = document.getElementById('pixCodeTA');
               await navigator.clipboard.writeText(ta.value);
-              Swal.fire({ toast:true, position:'top', icon:'success', title:'Código Pix copiado', showConfirmButton:false, timer:1800 });
+              Swal.fire({ toast: true, position: 'top', icon: 'success', title: 'Código Pix copiado', showConfirmButton: false, timer: 1800 });
             });
           }
         });
       }
 
       if (val === 'Dinheiro') {
-        if (total <= 0) { await Swal.fire({ icon:'info', title:'Carrinho vazio', text:'Adicione itens para calcular o troco.' }); paymentInput.value=''; return; }
+        if (total <= 0) { await Swal.fire({ icon: 'info', title: 'Carrinho vazio', text: 'Adicione itens para calcular o troco.' }); paymentInput.value = ''; return; }
         const { value: cash } = await Swal.fire({
           title: 'Valor em dinheiro',
           input: 'number',
@@ -948,14 +1332,14 @@ window.addEventListener("DOMContentLoaded", () => {
         if (cash !== undefined && cash !== null && cash !== '') {
           const value = parseFloat(cash);
           if (isNaN(value) || value < total) {
-            await Swal.fire({ icon:'warning', title:'Valor insuficiente', text:'O valor entregue é menor que o total.' });
-            paymentInput.value=''; return;
+            await Swal.fire({ icon: 'warning', title: 'Valor insuficiente', text: 'O valor entregue é menor que o total.' });
+            paymentInput.value = ''; return;
           }
           const troco = value - total;
           const notesEl = document.getElementById('notes');
           const prefix = notesEl.value.trim() ? notesEl.value.trim() + ' | ' : '';
           notesEl.value = `${prefix}Troco para: ${formatBRL(value)} (troco: ${formatBRL(troco)})`;
-          await Swal.fire({ icon:'success', title:'Troco calculado', text:`Troco: ${formatBRL(troco)}. Observação atualizada.` });
+          await Swal.fire({ icon: 'success', title: 'Troco calculado', text: `Troco: ${formatBRL(troco)}. Observação atualizada.` });
         } else {
           paymentInput.value = '';
         }
@@ -1044,10 +1428,10 @@ window.addEventListener("DOMContentLoaded", () => {
         if (window.salvarPedido) await window.salvarPedido(pedido);
       } catch (err) {
         console.error('Erro ao salvar pedido:', err);
-        Swal.fire({ icon:'error', title:'Erro ao salvar', text:'O pedido foi enviado no WhatsApp, mas não foi salvo no sistema.' });
+        Swal.fire({ icon: 'error', title: 'Erro ao salvar', text: 'O pedido foi enviado no WhatsApp, mas não foi salvo no sistema.' });
       }
 
-      Swal.fire({ icon:'success', title:'Pedido enviado!', text:'Seu pedido foi enviado e salvo no sistema.' })
+      Swal.fire({ icon: 'success', title: 'Pedido enviado!', text: 'Seu pedido foi enviado e salvo no sistema.' })
         .then(() => {
           setTimeout(() => {
             window.location.reload();
@@ -1056,19 +1440,19 @@ window.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    function buildPixBRCode({ key, name, city, amount, txid='ACAI' }) {
+    function buildPixBRCode({ key, name, city, amount, txid = 'ACAI' }) {
       const tlv = (id, value) => id + String(value.length).padStart(2, '0') + value;
-      const gui = tlv('00','BR.GOV.BCB.PIX');
+      const gui = tlv('00', 'BR.GOV.BCB.PIX');
       const mAccountInfo = tlv('26', gui + tlv('01', key));
-      const mc = tlv('52','0000');
-      const cur = tlv('53','986');
+      const mc = tlv('52', '0000');
+      const cur = tlv('53', '986');
       const amt = tlv('54', Number(amount).toFixed(2));
-      const cc = tlv('58','BR');
-      const nm = tlv('59', (name || '').slice(0,25));
-      const ct = tlv('60', (city || '').slice(0,15));
-      const add = tlv('62', tlv('05', (txid || '').slice(0,25)));
-      const pfi = tlv('00','01');
-      const poi = tlv('01','12');
+      const cc = tlv('58', 'BR');
+      const nm = tlv('59', (name || '').slice(0, 25));
+      const ct = tlv('60', (city || '').slice(0, 15));
+      const add = tlv('62', tlv('05', (txid || '').slice(0, 25)));
+      const pfi = tlv('00', '01');
+      const poi = tlv('01', '12');
       let payload = pfi + poi + mAccountInfo + mc + cur + amt + cc + nm + ct + add;
       payload += '63' + '04';
       const crc = crc16(payload);
@@ -1080,23 +1464,25 @@ window.addEventListener("DOMContentLoaded", () => {
       const bytes = new TextEncoder().encode(payload);
       for (let b of bytes) {
         crc ^= (b << 8);
-        for (let i=0;i<8;i++) {
+        for (let i = 0; i < 8; i++) {
           if (crc & 0x8000) { crc = (crc << 1) ^ poly; } else { crc = (crc << 1); }
           crc &= 0xFFFF;
         }
       }
-      return crc.toString(16).toUpperCase().padStart(4,'0');
+      return crc.toString(16).toUpperCase().padStart(4, '0');
     }
 
     // Bloqueios de segurança (mantidos como no original)
-document.addEventListener('keydown', function (e) {
-    if (e.ctrlKey && (e.key === 'u' || e.key === 'U')) { e.preventDefault(); }
-    if (e.key === 'F12') { e.preventDefault(); }
-});
-document.addEventListener('keydown', function (event) {
-    if (event.ctrlKey && event.shiftKey && event.key === 'I') { event.preventDefault(); }
-});
-document.addEventListener('contextmenu', function (event) { event.preventDefault(); });
+    document.addEventListener('keydown', function (e) {
+      if (e.ctrlKey && (e.key === 'u' || e.key === 'U')) { e.preventDefault(); }
+      if (e.key === 'F12') { e.preventDefault(); }
+    });
+    document.addEventListener('keydown', function (event) {
+      if (event.ctrlKey && event.shiftKey && event.key === 'I') { event.preventDefault(); }
+    });
+    document.addEventListener('contextmenu', function (event) { event.preventDefault(); });
   </script>
+
 </body>
+
 </html>
